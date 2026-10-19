@@ -38,31 +38,29 @@
 
   <!-- ================= 1. الشريط العلوي والهيدر ================= -->
   <header class="sticky top-0 z-50 bg-gradient-to-r from-brand-900 via-brand-850 to-brand-800 text-white shadow-md border-b border-brand-gold/30">
-    <div class="max-w-6xl mx-auto px-3 sm:px-4 py-2.5 flex items-center justify-between gap-2">
+    <div class="max-w-6xl mx-auto px-3 sm:px-4 py-2 flex items-center justify-between gap-2">
       
-      <!-- زر مشغل الصوتيات -->
+      <!-- زر مشغل الصوتيات (جهة اليمين) -->
       <div class="relative">
         <button onclick="toggleAudioDropdown()" class="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 border border-brand-gold/60 text-white text-xs px-2.5 py-1.5 rounded-full transition active:scale-95 shadow-sm">
           <span class="text-sm">🎧</span>
           <span class="font-bold">الصوتيات</span>
         </button>
 
-        <!-- نافذة الصوتيات المنسدلة المحدثة -->
+        <!-- نافذة الصوتيات المنسدلة -->
         <div id="audioDropdown" class="hidden absolute right-0 mt-2 w-72 bg-white text-slate-800 rounded-2xl shadow-xl border border-slate-200 overflow-hidden z-50">
           <div class="bg-brand-900 text-brand-gold text-xs font-black p-2.5 flex items-center justify-between">
             <span>ركن الاستماع والمقاطع الصوتية</span>
             <button onclick="toggleAudioDropdown()" class="text-slate-300 hover:text-white">✕</button>
           </div>
-          <div class="p-2 space-y-1.5 text-xs max-h-64 overflow-y-auto custom-scrollbar" id="audioTracksList">
-            <!-- تعبأ ديناميكياً من المقاطع الصوتية المسجلة -->
-          </div>
+          <div class="p-2 space-y-1.5 text-xs max-h-64 overflow-y-auto custom-scrollbar" id="audioTracksList"></div>
           <div id="audioStatus" class="text-[10px] text-center p-1.5 bg-slate-100 text-slate-600 border-t font-bold">المشغل جاهز</div>
         </div>
       </div>
 
-      <!-- عنوان وشعار المتجر -->
-      <div class="text-center">
-        <h1 class="text-base sm:text-lg font-black tracking-wide text-brand-gold flex items-center justify-center gap-1.5">
+      <!-- عنوان المتجر (في المنتصف) -->
+      <div class="text-center flex-1">
+        <h1 class="text-sm sm:text-lg font-black tracking-wide text-brand-gold flex items-center justify-center gap-1">
           <span>🌾</span>
           <span>الأخصائي للأعلاف والدواجن</span>
           <span>🐥</span>
@@ -70,14 +68,30 @@
         <p class="text-[10px] text-emerald-200 font-medium">كل ما تحتاجه مزرعتك وعنبرك بأعلى جودة وثقة</p>
       </div>
 
-      <!-- زر لوحة الإدارة -->
-      <button onclick="openAdminModal()" class="flex items-center gap-1 bg-brand-gold/20 hover:bg-brand-gold/30 border border-brand-gold text-brand-gold text-xs px-2.5 py-1.5 rounded-full transition active:scale-95 font-bold">
-        <span>⚙️</span>
-        <span class="hidden sm:inline">الإدارة</span>
-      </button>
+      <!-- لوجو المتجر (جهة اليسار مع إمكانية النقر للتكبير) -->
+      <div class="flex-shrink-0">
+        <button onclick="openLogoModal()" title="اضغط لتكبير اللوجو" class="w-11 h-11 rounded-full overflow-hidden border-2 border-brand-gold shadow-md hover:scale-105 transition active:scale-95 flex items-center justify-center bg-white p-0.5">
+          <img src="https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ" alt="لوجو الأخصائي" class="w-full h-full object-cover rounded-full">
+        </button>
+      </div>
 
     </div>
   </header>
+
+  <!-- نافذة تكبير اللوجو -->
+  <div id="logoModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onclick="closeLogoModal()">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-4 relative shadow-2xl text-center space-y-3" onclick="event.stopPropagation()">
+      <button onclick="closeLogoModal()" class="absolute top-3 left-3 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-600 hover:bg-slate-200">✕</button>
+      <h3 class="text-sm font-black text-brand-900">شعار «الأخصائي للأعلاف والدواجن»</h3>
+      <div class="rounded-2xl overflow-hidden border border-brand-gold/40 shadow-inner bg-slate-50 p-2">
+        <img src="https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ" alt="لوجو الأخصائي" class="w-full h-auto object-contain max-h-80 mx-auto rounded-xl">
+      </div>
+      <div class="text-[11px] text-slate-700 font-bold space-y-1">
+        <p class="text-emerald-800">جودة عالية • أسعار مناسبة • ثقة تدوم[span_2](start_span)[span_2](end_span)</p>
+        <p dir="ltr" class="text-xs text-brand-900 font-black">📞 01140969629 | 01010109759[span_3](start_span)[span_3](end_span)</p>
+      </div>
+    </div>
+  </div>
 
   <audio id="liveAudioPlayer" class="hidden"></audio>
 
@@ -98,7 +112,7 @@
   <main class="max-w-6xl mx-auto px-3 sm:px-4 py-4 space-y-4">
     <div class="rounded-xl border border-amber-300 bg-amber-50 p-3 text-xs text-amber-950 leading-relaxed"><strong>ملاحظة مهمة:</strong> هذه نسخة تجريبية تحفظ الإعدادات على نفس الجهاز والمتصفح فقط؛ لا توجد قاعدة بيانات مشتركة بين العملاء، والأسعار والمخزون والدفعات تحتاج إلى تحديث يدوي. لا تُدخل بيانات حساسة قبل تجهيز تسجيل دخول آمن وخادم وقاعدة بيانات.</div>
 
-    <!-- ================= 3. بانر الثقة وشعار الدفع بعد الاستلام ================= -->
+    <!-- ================= 3. بانر الثقة ================= -->
     <div class="bg-white rounded-2xl p-4 shadow-sm border-r-4 border-brand-gold border-t border-l border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div>
         <h2 class="text-sm sm:text-base font-black text-brand-900 flex items-center gap-1.5">
@@ -114,7 +128,7 @@
       </div>
     </div>
 
-    <!-- ================= 4. جدول مواعيد نزول الدفعات القادمة والحجز المسبق ================= -->
+    <!-- ================= 4. جدول مواعيد نزول الدفعات ================= -->
     <section class="bg-gradient-to-br from-emerald-900 to-brand-900 text-white rounded-2xl p-4 shadow-sm border border-brand-gold/40">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3 border-b border-white/10 pb-2.5">
         <div>
@@ -128,13 +142,10 @@
           حجز فوري على واتساب
         </span>
       </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs" id="batchScheduleList">
-        <!-- يعبأ ديناميكياً -->
-      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs" id="batchScheduleList"></div>
     </section>
 
-    <!-- ================= 5. بطاقة استعلام رصيد نقاط المربي برقم الهاتف ================= -->
+    <!-- ================= 5. رصيد نقاط المربي ================= -->
     <section class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
@@ -154,14 +165,12 @@
       <div id="pointsQueryResult" class="hidden mt-3 pt-3 border-t border-slate-100 text-xs"></div>
     </section>
 
-    <!-- ================= 6. فلاتر التبويبات السريعة ================= -->
+    <!-- ================= 6. فلاتر التبويبات ================= -->
     <div class="sticky top-14 z-40 bg-slate-50/95 py-2 backdrop-blur-sm border-b border-slate-200">
-      <div class="flex gap-1.5 overflow-x-auto pb-1 custom-scrollbar text-xs font-bold" id="filterTabsRow">
-        <!-- تضاف الأقسام ديناميكياً -->
-      </div>
+      <div class="flex gap-1.5 overflow-x-auto pb-1 custom-scrollbar text-xs font-bold" id="filterTabsRow"></div>
     </div>
 
-    <!-- ================= 7. شبكة المنتجات والعروض ================= -->
+    <!-- ================= 7. شبكة المنتجات ================= -->
     <section>
       <div class="flex items-center justify-between mb-3">
         <h3 id="currentCategoryTitle" class="text-sm sm:text-base font-black text-brand-900 flex items-center gap-1.5">
@@ -170,13 +179,10 @@
         </h3>
         <span id="productsCountBadge" class="text-[11px] font-bold text-slate-500 bg-white px-2 py-0.5 rounded-full border">0 صنف</span>
       </div>
-
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3.5" id="productsGrid">
-        <!-- تُحقن المنتجات ديناميكياً -->
-      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3.5" id="productsGrid"></div>
     </section>
 
-        <!-- ================= 8. الدليل الإرشادي الحصري للمربي ================= -->
+    <!-- ================= 8. دليل المربي ================= -->
     <section class="space-y-3 pt-2">
       <div class="text-center">
         <h3 class="text-sm sm:text-base font-black text-brand-900 flex items-center justify-center gap-1.5">
@@ -185,14 +191,10 @@
         </h3>
         <p class="text-[11px] text-slate-500">نصائح وإرشادات وقائية لتفادي النافق وزيادة التحويل لأعلى وزن</p>
       </div>
-
-      <!-- بطاقات الدليل الإرشادي (تعرض وتعدل من لوحة الإدارة) -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs" id="guidesGrid">
-        <!-- يعبأ ديناميكياً من لوحة الإدارة -->
-      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs" id="guidesGrid"></div>
     </section>
 
-<!-- ================= حاسبة تكلفة الدورة ================= -->
+    <!-- ================= 9. حاسبة تكلفة الدورة ================= -->
     <section class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-3">
       <div><h3 class="text-sm font-black text-brand-900">🧮 حاسبة تكلفة دورة التسمين</h3><p class="text-[11px] text-slate-500">تقدير مالي مبدئي حسب الأرقام التي تدخلها؛ لا يستخدم أسعارًا تلقائية.</p></div>
       <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
@@ -209,7 +211,7 @@
       <div id="cycleCalcResult" class="hidden rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs leading-relaxed"></div>
     </section>
 
-    <!-- ================= 9. الآلات الحاسبة التفاعلية الثلاث ================= -->
+    <!-- ================= 10. الآلات الحاسبة التفاعلية ================= -->
     <section class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
       <div class="flex items-center justify-between mb-3 border-b pb-2">
         <div>
@@ -226,7 +228,6 @@
         </div>
       </div>
 
-      <!-- حاسبة 1: العلف -->
       <div id="calcViewFeed" class="space-y-3 text-xs">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <div>
@@ -247,13 +248,10 @@
             <input type="number" id="calcBirdAge" value="10" class="w-full border p-2 rounded-xl text-xs font-bold">
           </div>
         </div>
-        <button onclick="calculateFeedNeeds()" class="w-full bg-brand-700 hover:bg-brand-800 text-white font-bold py-2 rounded-xl transition text-xs">
-          احسب احتياج العلف اليومي والإجمالي
-        </button>
+        <button onclick="calculateFeedNeeds()" class="w-full bg-brand-700 hover:bg-brand-800 text-white font-bold py-2 rounded-xl transition text-xs">احسب احتياج العلف</button>
         <div id="feedCalcResult" class="hidden p-3 bg-brand-50 rounded-xl border border-brand-200"></div>
       </div>
 
-      <!-- حاسبة 2: مياه الشرب والجرعات الدوائية -->
       <div id="calcViewMed" class="hidden space-y-3 text-xs">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div>
@@ -265,13 +263,10 @@
             <input type="number" id="medBirdAge" value="15" class="w-full border p-2 rounded-xl text-xs font-bold">
           </div>
         </div>
-        <button onclick="calculateMedNeeds()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-xl transition text-xs">
-          احسب كمية مياه الشرب والجرعة المقترحة
-        </button>
+        <button onclick="calculateMedNeeds()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-xl transition text-xs">احسب كمية المياه</button>
         <div id="medCalcResult" class="hidden p-3 bg-amber-50 rounded-xl border border-amber-200"></div>
       </div>
 
-      <!-- حاسبة 3: السقايات والعلافات واللمبات والمساحة -->
       <div id="calcViewEquip" class="hidden space-y-3 text-xs">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div>
@@ -286,22 +281,27 @@
             </select>
           </div>
         </div>
-        <button onclick="calculateEquipNeeds()" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 rounded-xl transition text-xs">
-          احسب عدد السقايات والعلافات واللمبات والمساحة
-        </button>
+        <button onclick="calculateEquipNeeds()" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 rounded-xl transition text-xs">احسب السقايات والعلافات</button>
         <div id="equipCalcResult" class="hidden p-3 bg-blue-50 rounded-xl border border-blue-200"></div>
       </div>
-
     </section>
+
+    <!-- زر لوحة الإدارة في أسفل الصفحة ومحمي بالرقم السري -->
+    <div class="pt-4 pb-2 text-center">
+      <button onclick="promptAdminAccess()" class="inline-flex items-center gap-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs px-4 py-2 rounded-xl transition active:scale-95 font-bold shadow-sm">
+        <span>⚙️</span>
+        <span>إدارة المتجر (للأخصائي فقط)</span>
+      </button>
+    </div>
 
   </main>
 
-  <!-- ================= 10. الشريط السفلي الثابت ================= -->
+  <!-- ================= 11. الشريط السفلي الثابت ================= -->
   <footer class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-2 z-40 shadow-lg">
     <div class="max-w-6xl mx-auto flex items-center justify-between gap-2">
       <div class="text-[11px]">
         <div class="font-bold text-brand-900">الأخصائي للأعلاف والدواجن</div>
-        <div class="text-slate-500 text-[10px]">الدفع عند وبعد المعاينة • 01140969629</div>
+        <div class="text-slate-500 text-[10px]">الدفع عند وبعد المعاينة • 01140969629[span_4](start_span)[span_4](end_span)</div>
       </div>
       <div class="flex items-center gap-2">
         <button onclick="openCustomOrderModal()" class="bg-brand-gold hover:bg-brand-golddark text-brand-900 font-black text-xs px-3 py-2 rounded-xl transition shadow active:scale-95">
@@ -315,16 +315,14 @@
     </div>
   </footer>
 
-  <!-- ================= 11. نافذة تأكيد الطلب السريع (Order Modal) ================= -->
+  <!-- ================= 12. نافذة تأكيد الطلب السريع ================= -->
   <div id="orderModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3">
     <div class="bg-white rounded-3xl max-w-sm w-full p-4 sm:p-5 text-xs space-y-3 relative shadow-2xl">
       <button onclick="closeOrderModal()" class="absolute top-3 left-3 w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-500 hover:bg-slate-200">✕</button>
-      
       <div class="text-center pt-1">
         <h4 class="font-black text-sm text-brand-900" id="orderModalProductTitle">تأكيد طلب المنتج</h4>
         <p class="text-[10px] text-emerald-700 font-bold mt-0.5">الدفع بعد الاستلام والفحص التام</p>
       </div>
-
       <div class="space-y-2">
         <div>
           <label class="block text-[11px] font-bold text-slate-700 mb-0.5">الاسم / اسم المربي:</label>
@@ -345,11 +343,10 @@
           </div>
         </div>
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">ملاحظات إضافية (اختياري):</label>
+          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">ملاحظات إضافية:</label>
           <input type="text" id="orderCustomerNotes" placeholder="أي تفاصيل خاصة بالتوصيل أو العمر" class="w-full border p-2 rounded-xl outline-none focus:border-brand-700 text-xs">
         </div>
       </div>
-
       <div class="pt-1">
         <button onclick="submitOrderToWhatsapp()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-95">
           <span>📲</span>
@@ -359,11 +356,9 @@
     </div>
   </div>
 
-  <!-- ================= 12. لوحة تحكم صاحب المتجر (Admin Modal) ================= -->
+  <!-- ================= 13. لوحة تحكم صاحب المتجر ================= -->
   <div id="adminModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3">
     <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl text-xs">
-      
-      <!-- هيدر اللوحة -->
       <div class="bg-brand-900 text-white p-3.5 flex items-center justify-between border-b border-brand-gold/40">
         <div class="flex items-center gap-2">
           <span class="text-base">⚙️</span>
@@ -372,7 +367,6 @@
         <button onclick="closeAdminModal()" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center font-bold">✕</button>
       </div>
 
-      <!-- تبويبات اللوحة -->
       <div class="flex border-b border-slate-200 bg-slate-100 text-xs font-bold overflow-x-auto custom-scrollbar">
         <button onclick="setAdminTab('products')" id="adminTabBtn_products" class="px-4 py-2.5 border-b-2 border-brand-800 text-brand-800 bg-white whitespace-nowrap">المنتجات والأسعار</button>
         <button onclick="setAdminTab('batches')" id="adminTabBtn_batches" class="px-4 py-2.5 text-slate-600 hover:text-brand-800 whitespace-nowrap">مواعيد الدفعات</button>
@@ -382,140 +376,110 @@
         <button onclick="setAdminTab('market')" id="adminTabBtn_market" class="px-4 py-2.5 text-slate-600 hover:text-brand-800 whitespace-nowrap">تحديث البورصة</button>
       </div>
 
-      <!-- محتوى التبويبات -->
       <div class="p-3.5 overflow-y-auto flex-1 space-y-3.5">
-        
-        <!-- 1. إدارة المنتجات -->
         <div id="adminContent_products" class="space-y-3">
           <div class="bg-slate-50 border p-3 rounded-2xl space-y-2">
-            <h5 class="font-black text-brand-900 text-xs">➕ إضافة منتج جديد أو عرض:</h5>
+            <h5 class="font-black text-brand-900 text-xs">➕ إضافة منتج جديد:</h5>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <input type="text" id="newProdName" placeholder="اسم المنتج (مثلاً: بط مسكوفي فرز أول)" class="border p-2 rounded-xl text-xs">
+              <input type="text" id="newProdName" placeholder="اسم المنتج" class="border p-2 rounded-xl text-xs">
               <select id="newProdCategory" class="border p-2 rounded-xl text-xs bg-white"></select>
-              <input type="text" id="newProdPrice" placeholder="السعر (مثلاً: 850 ج أو سعر اليوم)" class="border p-2 rounded-xl text-xs">
-              <input type="text" id="newProdOldPrice" placeholder="السعر قبل الخصم (اختياري للعروض)" class="border p-2 rounded-xl text-xs">
+              <input type="text" id="newProdPrice" placeholder="السعر" class="border p-2 rounded-xl text-xs">
+              <input type="text" id="newProdOldPrice" placeholder="السعر قبل الخصم (اختياري)" class="border p-2 rounded-xl text-xs">
               <input type="text" id="newProdImages" placeholder="روابط الصور مفصولة بفاصلة (,)" class="border p-2 rounded-xl text-xs sm:col-span-2">
-              <textarea id="newProdDesc" placeholder="مواصفات المنتج وسلالته..." class="border p-2 rounded-xl text-xs sm:col-span-2" rows="2"></textarea>
+              <textarea id="newProdDesc" placeholder="المواصفات..." class="border p-2 rounded-xl text-xs sm:col-span-2" rows="2"></textarea>
             </div>
             <div class="flex gap-4 items-center text-[11px] font-bold">
-              <label class="flex items-center gap-1 cursor-pointer">
-                <input type="checkbox" id="newProdIsOffer" class="rounded text-brand-700"> عرض خاص
-              </label>
-              <label class="flex items-center gap-1 cursor-pointer">
-                <input type="checkbox" id="newProdIsHot" class="rounded text-brand-700"> الأكثر طلباً 🔥
-              </label>
-              <label class="flex items-center gap-1 cursor-pointer">
-                <input type="checkbox" id="newProdInStock" checked class="rounded text-brand-700"> متوفر بالمخزون
-              </label>
+              <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="newProdIsOffer" class="rounded text-brand-700"> عرض خاص</label>
+              <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="newProdIsHot" class="rounded text-brand-700"> الأكثر طلباً 🔥</label>
+              <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="newProdInStock" checked class="rounded text-brand-700"> متوفر بالمخزون</label>
             </div>
-            <button onclick="saveNewProduct()" class="w-full bg-brand-800 text-white font-bold py-2 rounded-xl hover:bg-brand-900 transition">
-              حفظ المنتج وإدراجه بالمتجر
-            </button>
+            <button onclick="saveNewProduct()" class="w-full bg-brand-800 text-white font-bold py-2 rounded-xl hover:bg-brand-900 transition">حفظ المنتج</button>
           </div>
-
           <div class="space-y-1.5" id="adminProductsManageList"></div>
         </div>
 
-        <!-- 2. مواعيد الدفعات القادمة -->
         <div id="adminContent_batches" class="hidden space-y-3">
           <div class="bg-slate-50 border p-3 rounded-2xl space-y-2">
             <h5 class="font-black text-brand-900">إضافة موعد دفعة قادمة:</h5>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <input type="text" id="newBatchTitle" placeholder="اسم الدفعة (مثلاً: بط مسكوفي آر 41)" class="border p-2 rounded-xl text-xs">
-              <input type="text" id="newBatchDate" placeholder="الموعد (مثلاً: الثلاثاء القادم 6 صباحاً)" class="border p-2 rounded-xl text-xs">
-              <input type="text" id="newBatchStatus" placeholder="الحالة (مثلاً: متاح حجز 300 بطة)" class="border p-2 rounded-xl text-xs">
+              <input type="text" id="newBatchTitle" placeholder="اسم الدفعة" class="border p-2 rounded-xl text-xs">
+              <input type="text" id="newBatchDate" placeholder="الموعد" class="border p-2 rounded-xl text-xs">
+              <input type="text" id="newBatchStatus" placeholder="الحالة" class="border p-2 rounded-xl text-xs">
             </div>
-            <button onclick="saveNewBatch()" class="w-full bg-emerald-700 text-white font-bold py-2 rounded-xl hover:bg-emerald-800 transition">
-              حفظ الدفعة في الجدول الرئيسي
-            </button>
+            <button onclick="saveNewBatch()" class="w-full bg-emerald-700 text-white font-bold py-2 rounded-xl hover:bg-emerald-800 transition">حفظ الدفعة</button>
           </div>
           <div class="space-y-2" id="adminBatchesManageList"></div>
         </div>
 
-        <!-- 3. إدارة نقاط العملاء برقم الهاتف -->
         <div id="adminContent_points" class="hidden space-y-3">
           <div class="bg-slate-50 border p-3 rounded-2xl space-y-2">
-            <h5 class="font-black text-brand-900">تعديل أو شحن نقاط لمربي:</h5>
+            <h5 class="font-black text-brand-900">تعديل أو شحن نقاط:</h5>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <input type="tel" id="adminPointPhone" placeholder="رقم الهاتف" class="border p-2 rounded-xl text-xs font-bold">
               <input type="text" id="adminPointName" placeholder="اسم المربي" class="border p-2 rounded-xl text-xs">
-              <input type="number" id="adminPointAmount" placeholder="النقاط (مثلاً: 200)" class="border p-2 rounded-xl text-xs font-bold">
+              <input type="number" id="adminPointAmount" placeholder="النقاط" class="border p-2 rounded-xl text-xs font-bold">
             </div>
-            <button onclick="saveAdminCustomerPoints()" class="w-full bg-brand-800 text-white font-bold py-2 rounded-xl hover:bg-brand-900 transition">
-              حفظ وتحديث رصيد العميل
-            </button>
+            <button onclick="saveAdminCustomerPoints()" class="w-full bg-brand-800 text-white font-bold py-2 rounded-xl hover:bg-brand-900 transition">حفظ النقاط</button>
           </div>
           <div class="space-y-1.5" id="adminCustomersPointsList"></div>
         </div>
 
-        <!-- 5. إدارة دليل المربي العلمي -->
         <div id="adminContent_guides" class="hidden space-y-3">
           <div class="bg-slate-50 border p-3 rounded-2xl space-y-2">
-            <h5 class="font-black text-brand-900">➕ إضافة بطاقة إرشادية جديدة للدليل:</h5>
+            <h5 class="font-black text-brand-900">➕ إضافة بطاقة إرشادية:</h5>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <input type="text" id="newGuideTitle" placeholder="عنوان البطاقة (مثلاً: إرشادات الأسبوع الأول)" class="border p-2 rounded-xl text-xs sm:col-span-2 font-bold">
+              <input type="text" id="newGuideTitle" placeholder="عنوان البطاقة" class="border p-2 rounded-xl text-xs sm:col-span-2 font-bold">
               <select id="newGuideColor" class="border p-2 rounded-xl text-xs bg-white">
-                <option value="amber">لون تنبيهي (أصفر/برتقالي) 🚨</option>
-                <option value="emerald">لون وقائي/علاجي (أخضر) 🌡️</option>
-                <option value="blue">لون استرشادي عام (أزرق) 💡</option>
+                <option value="amber">لون تنبيهي 🚨</option>
+                <option value="emerald">لون وقائي 🌡️</option>
+                <option value="blue">لون استرشادي 💡</option>
               </select>
-              <input type="text" id="newGuideIcon" placeholder="رمز الأيقونة (مثلاً: 🚨 أو 🌡️ أو 💊)" value="💡" class="border p-2 rounded-xl text-xs">
-              <textarea id="newGuideContent" placeholder="اكتب النصائح هنا (كل نصيحة في سطر منفصل)..." class="border p-2 rounded-xl text-xs sm:col-span-2" rows="3"></textarea>
+              <input type="text" id="newGuideIcon" placeholder="رمز الأيقونة" value="💡" class="border p-2 rounded-xl text-xs">
+              <textarea id="newGuideContent" placeholder="اكتب النصائح هنا..." class="border p-2 rounded-xl text-xs sm:col-span-2" rows="3"></textarea>
             </div>
-            <button onclick="saveNewGuide()" class="w-full bg-brand-800 text-white font-bold py-2 rounded-xl hover:bg-brand-900 transition">
-              حفظ البطاقة في الدليل العلمي
-            </button>
+            <button onclick="saveNewGuide()" class="w-full bg-brand-800 text-white font-bold py-2 rounded-xl hover:bg-brand-900 transition">حفظ البطاقة</button>
           </div>
           <div class="space-y-2" id="adminGuidesManageList"></div>
         </div>
 
-        <!-- 6. إدارة المقاطع الصوتية -->
         <div id="adminContent_audio" class="hidden space-y-3">
           <div class="bg-slate-50 border p-3 rounded-2xl space-y-2">
-            <h5 class="font-black text-brand-900">➕ إضافة مقطع صوتي جديد (قرآن أو نصائح أو دروس):</h5>
+            <h5 class="font-black text-brand-900">➕ إضافة مقطع صوتي:</h5>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <input type="text" id="newAudioTitle" placeholder="عنوان المقطع (مثلاً: سورة البقرة - الشيخ المنشاوي)" class="border p-2 rounded-xl text-xs sm:col-span-2 font-bold">
-              <input type="text" id="newAudioUrl" placeholder="رابط الملف الصوتي المباشر (MP3 أو رابط إذاعة)" class="border p-2 rounded-xl text-xs sm:col-span-2" dir="ltr">
-              <input type="text" id="newAudioDesc" placeholder="وصف المقطع (مثلاً: تلاوة مباركة / إرشاد علاجي)" class="border p-2 rounded-xl text-xs sm:col-span-2">
+              <input type="text" id="newAudioTitle" placeholder="عنوان المقطع" class="border p-2 rounded-xl text-xs sm:col-span-2 font-bold">
+              <input type="text" id="newAudioUrl" placeholder="رابط الصوت" class="border p-2 rounded-xl text-xs sm:col-span-2" dir="ltr">
+              <input type="text" id="newAudioDesc" placeholder="وصف المقطع" class="border p-2 rounded-xl text-xs sm:col-span-2">
             </div>
-            <button onclick="saveNewAudioTrack()" class="w-full bg-brand-800 text-white font-bold py-2 rounded-xl hover:bg-brand-900 transition">
-              حفظ وإضافة المقطع لقائمة الاستماع
-            </button>
+            <button onclick="saveNewAudioTrack()" class="w-full bg-brand-800 text-white font-bold py-2 rounded-xl hover:bg-brand-900 transition">حفظ المقطع</button>
           </div>
           <div class="space-y-2" id="adminAudioManageList"></div>
         </div>
 
-        <!-- 4. تحديث توقيت البورصة -->
         <div id="adminContent_market" class="hidden space-y-3">
           <div class="bg-slate-50 border p-3 rounded-2xl space-y-2">
             <h5 class="font-black text-brand-900">تحديث ساعة وتاريخ بورصة اليوم:</h5>
-            <input type="text" id="adminMarketInput" placeholder="مثلاً: اليوم 10:00 ص أو السبت 18 أكتوبر" class="w-full border p-2 rounded-xl text-xs font-bold">
-            <button onclick="updateMarketTime()" class="w-full bg-amber-600 text-white font-bold py-2 rounded-xl hover:bg-amber-700 transition">
-              تحديث شريط البورصة لجميع الزوار
-            </button>
+            <input type="text" id="adminMarketInput" placeholder="مثلاً: اليوم 10:00 ص" class="w-full border p-2 rounded-xl text-xs font-bold">
+            <button onclick="updateMarketTime()" class="w-full bg-amber-600 text-white font-bold py-2 rounded-xl hover:bg-amber-700 transition">تحديث الشريط</button>
           </div>
         </div>
-
       </div>
-
     </div>
   </div>
 
-  <!-- ================= 13. البيانات والبرمجة التفاعلية (JavaScript) ================= -->
+  <!-- ================= 14. كود الجافا سكريبت ================= -->
   <script>
-    // الرقم المعتمد لتلقي الطلبات
     const STORE_WHATSAPP = "201140969629";
 
-    // أدوات حماية وعزل البيانات المدخلة قبل عرضها في HTML.
     function escapeHTML(value) {
       return String(value ?? '').replace(/[&<>"']/g, ch => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
       })[ch]);
     }
-    // تُستخدم فقط عند تمرير نص إلى معالج onclick داخل خاصية HTML.
+
     function jsArg(value) {
       return escapeHTML(JSON.stringify(String(value ?? '')).replace(/</g, '\\u003c'));
     }
+
     function safeMediaUrl(value, allowBlob = false) {
       try {
         const u = new URL(String(value || ''), window.location.href);
@@ -523,27 +487,22 @@
       } catch (_) {}
       return '';
     }
+
     function loadStored(key, fallback) {
       try {
         const raw = localStorage.getItem(key);
         if (raw === null) return fallback;
-        const parsed = JSON.parse(raw);
-        return parsed ?? fallback;
+        return JSON.parse(raw) ?? fallback;
       } catch (error) {
-        console.warn('تعذر قراءة بيانات محلية:', key, error);
         return fallback;
       }
     }
+
     function storeValue(key, value) {
       try { localStorage.setItem(key, value); return true; }
-      catch (error) {
-        console.error('تعذر حفظ البيانات محلياً:', error);
-        alert('مساحة التخزين في المتصفح غير متاحة أو ممتلئة. صدّر نسخة احتياطية قبل متابعة التعديلات.');
-        return false;
-      }
+      catch (error) { return false; }
     }
 
-    // الأقسام الافتراضية
     const defaultCategories = [
       { id: "all", name: "الكل 🌟" },
       { id: "offers", name: "العروض والتخفيضات 🏷️" },
@@ -554,14 +513,12 @@
       { id: "equipment", name: "مستلزمات التربية 💡" }
     ];
 
-    // جدول الدفعات القادمة
     const defaultBatches = [
       { id: 1, title: "بط مسكوفي فرز أول (عمر يوم)", date: "الثلاثاء القادم (فجراً)", status: "متاح حجز مسبق (باقي 250 بطة)" },
       { id: 2, title: "كتاكيت أبيض تسمين شركات", date: "الأربعاء القادم (صباحاً)", status: "حجز مفتوح حتى اكتمال العدد" },
       { id: 3, title: "فراخ ساسو وفيومي بيور", date: "السبت القادم", status: "دفعة جديدة محصنة" }
     ];
 
-    // المنتجات الافتراضية مع معارض صور متعددة
     const defaultProducts = [
       {
         id: "p1",
@@ -570,10 +527,7 @@
         price: "سعر اليوم بالوزن",
         oldPrice: null,
         desc: "مناعة صلبة ومعدل تحويل ممتاز، تحصين كامل ضد الطاعون والريمرلا.",
-        images: [
-          "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=500",
-          "https://images.unsplash.com/photo-1563281577-a7be47e20db9?w=500"
-        ],
+        images: ["https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ"],
         isHot: true,
         isOffer: false,
         inStock: true
@@ -585,10 +539,7 @@
         price: "1020 ج.م",
         oldPrice: "1200 ج.م",
         desc: "20 كتكوت تسمين + شيكارة علف بادي 23% + عبوة فيتامينات ومطهر معوي للاستقبال.",
-        images: [
-          "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=500",
-          "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=500"
-        ],
+        images: ["https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ"],
         isHot: true,
         isOffer: true,
         inStock: true
@@ -600,10 +551,7 @@
         price: "سعر بورصة اليوم",
         oldPrice: null,
         desc: "سلالات كب / روص أوزان ثقيلة وتحويل سريع بأقل استهلاك علف.",
-        images: [
-          "https://images.unsplash.com/photo-1563281577-a7be47e20db9?w=500",
-          "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=500"
-        ],
+        images: ["https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ"],
         isHot: true,
         isOffer: false,
         inStock: true
@@ -615,10 +563,7 @@
         price: "850 ج.م",
         oldPrice: "880 ج.م",
         desc: "بروتين صافي نباتي مع مضادات سموم فطرية لنمو متناسق وخالي من المشاكل.",
-        images: [
-          "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=500",
-          "https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=500"
-        ],
+        images: ["https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ"],
         isHot: false,
         isOffer: true,
         inStock: true
@@ -630,9 +575,7 @@
         price: "135 ج.م",
         oldPrice: "160 ج.م",
         desc: "فيتامينات أ د 3 هـ إيطالي + مضاد حيوي معوي تنفسي ومحلول جفاف متكامل.",
-        images: [
-          "https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=500"
-        ],
+        images: ["https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ"],
         isHot: false,
         isOffer: false,
         inStock: true
@@ -644,22 +587,18 @@
         price: "95 ج.م",
         oldPrice: null,
         desc: "بلاستيك نقي عالي المرونة وصاج مجلفن يمنع هدر وتلوث العلف.",
-        images: [
-          "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=500"
-        ],
+        images: ["https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ"],
         isHot: false,
         isOffer: false,
         inStock: true
       }
     ];
 
-    // العملاء ونقاطهم المسجلة برقم الهاتف
-    const defaultCustomers = {}; // لا تعرض بيانات عملاء تجريبية أو أرقام أشخاص افتراضية
-
-    // تحميل البيانات من LocalStorage
+    const defaultCustomers = {};
     let categories = loadStored('al_akhsai_cats', defaultCategories);
     let products = loadStored('al_akhsai_prods', defaultProducts);
     let batches = loadStored('al_akhsai_batches', defaultBatches);
+
     const defaultGuides = [
       {
         id: "g1",
@@ -688,12 +627,13 @@
     let customers = loadStored('al_akhsai_custs', defaultCustomers);
     let guides = loadStored('al_akhsai_guides', defaultGuides);
 
+    // البث المباشر المحدث لإذاعة القرآن الكريم المصرية من القاهرة
     const defaultAudioTracks = [
       {
         id: "a1",
-        title: "📻 إذاعة القرآن الكريم من القاهرة",
-        desc: "بث إذاعي مباشر وحي 24 ساعة",
-        url: "https://qurango.net/radio/tarateel"
+        title: "📻 إذاعة القرآن الكريم من القاهرة (بث مباشر)",
+        desc: "البث الحي والمباشر لإذاعة القرآن الكريم المصرية",
+        url: "https://stream.radiojar.com/8s5u5tpdtwzuv"
       },
       {
         id: "a2",
@@ -709,7 +649,7 @@
       }
     ];
 
-    let audioTracks = loadStored('al_akhsai_audio', defaultAudioTracks);
+    let audioTracks = loadStored('al_akhsai_audio_v2', defaultAudioTracks);
     let currentPlayingTrackId = null;
     let marketTime = localStorage.getItem('al_akhsai_market_time') || "آخر تحديث غير محدد";
     let localOrderCounter = Math.max(0, Number.parseInt(localStorage.getItem('al_akhsai_order_counter') || '0', 10) || 0);
@@ -724,19 +664,27 @@
       storeValue('al_akhsai_batches', JSON.stringify(batches));
       storeValue('al_akhsai_custs', JSON.stringify(customers));
       storeValue('al_akhsai_guides', JSON.stringify(guides));
-      storeValue('al_akhsai_audio', JSON.stringify(audioTracks));
+      storeValue('al_akhsai_audio_v2', JSON.stringify(audioTracks));
       storeValue('al_akhsai_market_time', marketTime);
     }
 
-    // ================= مشغل وإدارة المقاطع الصوتية =================
-    function toggleAudioDropdown() {
-      document.getElementById('audioDropdown').classList.toggle('hidden');
+    function openLogoModal() { document.getElementById('logoModal').classList.remove('hidden'); }
+    function closeLogoModal() { document.getElementById('logoModal').classList.add('hidden'); }
+
+    function promptAdminAccess() {
+      const enteredPass = prompt("أدخل الرقم السري الخاص بلوحة التحكم:");
+      if (enteredPass === "574176") {
+        openAdminModal();
+      } else if (enteredPass !== null) {
+        alert("الرقم السري غير صحيح!");
+      }
     }
+
+    function toggleAudioDropdown() { document.getElementById('audioDropdown').classList.toggle('hidden'); }
 
     function renderAudioTracks() {
       const list = document.getElementById('audioTracksList');
       if (!list) return;
-
       list.innerHTML = audioTracks.map(track => {
         const isPlaying = currentPlayingTrackId === track.id;
         return `
@@ -745,9 +693,7 @@
               <h6 class="font-bold text-xs text-brand-900 truncate">${escapeHTML(track.title)}</h6>
               <p class="text-[10px] text-slate-500 truncate">${escapeHTML(track.desc || '')}</p>
             </div>
-            <button onclick="togglePlayTrack(${jsArg(track.id)})" class="px-2.5 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap transition ${
-              isPlaying ? 'bg-rose-600 text-white shadow-sm' : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
-            }">
+            <button onclick="togglePlayTrack(${jsArg(track.id)})" class="px-2.5 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap transition ${isPlaying ? 'bg-rose-600 text-white' : 'bg-emerald-600 text-white'}">
               ${isPlaying ? 'إيقاف ⏸' : 'تشغيل ▶'}
             </button>
           </div>
@@ -759,7 +705,6 @@
       const track = audioTracks.find(t => t.id === id);
       const audio = document.getElementById('liveAudioPlayer');
       const status = document.getElementById('audioStatus');
-
       if (!track) return;
 
       if (currentPlayingTrackId === id) {
@@ -772,7 +717,6 @@
       }
 
       currentPlayingTrackId = id;
-
       if (track.url === 'tts_advice') {
         audio.pause();
         speakAdvice();
@@ -781,30 +725,24 @@
       }
 
       if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-
       audio.src = track.url;
       audio.play().then(() => {
         status.innerText = `جاري تشغيل: ${track.title}`;
       }).catch(() => {
         status.innerText = "اضغط على أي مكان بالصفحة للسماح بتشغيل الصوت";
       });
-
       renderAudioTracks();
     }
 
     function speakAdvice() {
-      const text = "أهلاً بك في متجر الأخصائي. نصيحة اليوم: تأكد من تدفئة مكان الاستقبال قبل وصول الطيور بساعتين، وقدّم ماءً دافئاً مع محلول الجفاف في أول ساعتين قبل نزول العلف لتقليل النافق والحفاظ على حيوية القطيع.";
+      const text = "أهلاً بك في متجر الأخصائي. نصيحة اليوم: تأكد من تدفئة مكان الاستقبال قبل وصول الطيور بساعتين، وقدّم ماءً دافئاً مع محلول الجفاف في أول ساعتين قبل نزول العلف.";
       const status = document.getElementById('audioStatus');
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'ar-SA';
         utterance.rate = 0.95;
-        utterance.onend = () => {
-          currentPlayingTrackId = null;
-          status.innerText = "المشغل جاهز";
-          renderAudioTracks();
-        };
+        utterance.onend = () => { currentPlayingTrackId = null; status.innerText = "المشغل جاهز"; renderAudioTracks(); };
         window.speechSynthesis.speak(utterance);
         status.innerText = "جاري قراءة الإرشاد الصوتي...";
       } else {
@@ -817,18 +755,13 @@
     function renderAdminAudioList() {
       const el = document.getElementById('adminAudioManageList');
       if (!el) return;
-      if (!audioTracks.length) {
-        el.innerHTML = '<p class="text-slate-400 text-xs">لا توجد مقاطع صوتية مسجلة.</p>';
-        return;
-      }
-
       el.innerHTML = audioTracks.map(t => `
         <div class="bg-white p-2.5 rounded-xl border flex items-center justify-between text-xs gap-2">
           <div class="overflow-hidden">
             <strong class="text-brand-900 truncate block">${escapeHTML(t.title)}</strong>
             <span class="text-[10px] text-slate-500 truncate block">${escapeHTML(t.desc || t.url)}</span>
           </div>
-          <button onclick="deleteAudioTrack(${jsArg(t.id)})" class="px-2 py-1 rounded bg-rose-50 text-rose-600 text-[10px] font-bold hover:bg-rose-100 whitespace-nowrap">حذف</button>
+          <button onclick="deleteAudioTrack(${jsArg(t.id)})" class="px-2 py-1 rounded bg-rose-50 text-rose-600 text-[10px] font-bold">حذف</button>
         </div>
       `).join('');
     }
@@ -837,35 +770,19 @@
       const title = document.getElementById('newAudioTitle').value.trim();
       const url = document.getElementById('newAudioUrl').value.trim();
       const desc = document.getElementById('newAudioDesc').value.trim();
+      if (!title || !url) return alert("يرجى كتابة عنوان ورابط المقطع");
 
-      if (!title || !url) {
-        alert("يرجى كتابة عنوان المقطع ورابط الصوت المباشر");
-        return;
-      }
-
-      audioTracks.push({
-        id: 'a_' + Date.now(),
-        title,
-        url: validatedUrl,
-        desc
-      });
-
+      audioTracks.push({ id: 'a_' + Date.now(), title, url: safeMediaUrl(url), desc });
       saveToStorage();
       renderAudioTracks();
       renderAdminAudioList();
-      alert("تمت إضافة المقطع الصوتي لقائمة الاستماع بنجاح!");
-
       document.getElementById('newAudioTitle').value = '';
       document.getElementById('newAudioUrl').value = '';
       document.getElementById('newAudioDesc').value = '';
     }
 
     function deleteAudioTrack(id) {
-      if (confirm("هل تريد حذف هذا المقطع الصوتي من القائمة؟")) {
-        if (currentPlayingTrackId === id) {
-          document.getElementById('liveAudioPlayer').pause();
-          currentPlayingTrackId = null;
-        }
+      if (confirm("هل تريد حذف هذا المقطع الصوتي؟")) {
         audioTracks = audioTracks.filter(t => t.id !== id);
         saveToStorage();
         renderAudioTracks();
@@ -873,69 +790,47 @@
       }
     }
 
-    // ================= فحص نقاط المربي برقم الهاتف =================
     function queryUserPoints() {
       const phoneInput = document.getElementById('userPhoneQuery').value.trim();
       const resBox = document.getElementById('pointsQueryResult');
-
-      if (!phoneInput) {
-        alert("يرجى كتابة رقم الموبايل أولاً");
-        return;
-      }
-
+      if (!phoneInput) return alert("يرجى كتابة رقم الموبايل");
       resBox.classList.remove('hidden');
       const client = customers[phoneInput];
-
       if (client) {
         const points = Math.max(0, Number(client.points) || 0);
-        const discountVal = (points / 10).toFixed(0);
         resBox.innerHTML = `
           <div class="bg-brand-900 text-white p-3 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-brand-gold/50">
             <div>
-              <p class="font-bold text-xs text-brand-gold">أهلاً بحضرتك يا حاج: ${escapeHTML(client.name)} 🌟</p>
-              <p class="text-[11px] text-slate-200 mt-0.5">رصيد نقاطك المسجل: <span class="font-black text-amber-300 text-xs">${points} نقطة</span></p>
+              <p class="font-bold text-xs text-brand-gold">أهلاً بك: ${escapeHTML(client.name)} 🌟</p>
+              <p class="text-[11px] text-slate-200 mt-0.5">رصيد نقاطك: <span class="font-black text-amber-300 text-xs">${points} نقطة</span></p>
             </div>
             <div class="bg-white/10 px-3 py-1.5 rounded-xl text-center border border-white/20">
-              <span class="text-[10px] text-slate-300 block">قيمة الخصم المتاح لك فوراً:</span>
-              <span class="font-black text-brand-gold text-xs">${discountVal} جنيه مصري</span>
+              <span class="text-[10px] text-slate-300 block">خصم متاح:</span>
+              <span class="font-black text-brand-gold text-xs">${(points / 10).toFixed(0)} جنيه</span>
             </div>
           </div>
         `;
       } else {
-        resBox.innerHTML = `
-          <div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-amber-900 text-center font-bold text-[11px]">
-            هذا الرقم غير مسجل حتى الآن. اطلب أول دفعة وسيتم تفعيل وإضافة نقاطك تلقائياً!
-          </div>
-        `;
+        resBox.innerHTML = `<div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-amber-900 text-center font-bold text-[11px]">هذا الرقم غير مسجل حتى الآن. اطلب أول دفعة وسيتم إضافة نقاطك!</div>`;
       }
     }
 
-    // ================= رندرة الأقسام والمنتجات =================
     function renderFilterTabs() {
-      const container = document.getElementById('filterTabsRow');
-      container.innerHTML = categories.map(cat => {
-        const isActive = activeFilter === cat.id;
-        return `
-          <button onclick="setFilter(${jsArg(cat.id)})" class="px-3 py-1.5 rounded-full transition whitespace-nowrap ${
-            isActive ? 'bg-brand-800 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
-          }">
-            ${escapeHTML(cat.name)}
-          </button>
-        `;
-      }).join('');
+      document.getElementById('filterTabsRow').innerHTML = categories.map(cat => `
+        <button onclick="setFilter(${jsArg(cat.id)})" class="px-3 py-1.5 rounded-full transition whitespace-nowrap ${activeFilter === cat.id ? 'bg-brand-800 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}">
+          ${escapeHTML(cat.name)}
+        </button>
+      `).join('');
     }
 
     function setFilter(catId) {
       activeFilter = catId;
       renderFilterTabs();
       renderProducts();
-      renderGuides();
-      renderAudioTracks();
     }
 
     function renderBatches() {
-      const list = document.getElementById('batchScheduleList');
-      list.innerHTML = batches.map(b => `
+      document.getElementById('batchScheduleList').innerHTML = batches.map(b => `
         <div class="bg-white/10 border border-white/20 p-2.5 rounded-xl flex flex-col justify-between">
           <div>
             <span class="text-[10px] bg-brand-gold text-brand-900 font-black px-1.5 py-0.5 rounded">${escapeHTML(b.date)}</span>
@@ -952,89 +847,51 @@
     function renderProducts() {
       const grid = document.getElementById('productsGrid');
       let filtered = products;
-
-      if (activeFilter === 'offers') {
-        filtered = products.filter(p => p.isOffer);
-      } else if (activeFilter === 'hot') {
-        filtered = products.filter(p => p.isHot);
-      } else if (activeFilter !== 'all') {
-        filtered = products.filter(p => p.categoryId === activeFilter);
-      }
+      if (activeFilter === 'offers') filtered = products.filter(p => p.isOffer);
+      else if (activeFilter === 'hot') filtered = products.filter(p => p.isHot);
+      else if (activeFilter !== 'all') filtered = products.filter(p => p.categoryId === activeFilter);
 
       document.getElementById('productsCountBadge').innerText = `${filtered.length} صنف`;
-
       if (!filtered.length) {
-        grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400 text-xs">لا توجد منتجات مسجلة في هذا القسم حالياً.</div>`;
+        grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400 text-xs">لا توجد منتجات مسجلة هنا.</div>`;
         return;
       }
 
       grid.innerHTML = filtered.map(p => {
         const currentImgIndex = activeImageState[p.id] || 0;
-        const currentImgSrc = p.images && p.images[currentImgIndex] ? p.images[currentImgIndex] : 'https://placehold.co/400x300/154734/ffffff?text=الأخصائي';
-
+        const currentImgSrc = p.images && p.images[currentImgIndex] ? p.images[currentImgIndex] : 'https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ';
         return `
           <div class="bg-white rounded-2xl overflow-hidden border border-slate-200/90 shadow-sm flex flex-col justify-between relative group hover:shadow-md transition">
-            
-            <!-- أوسمة العروض والتوفر -->
             <div class="absolute top-2 right-2 z-10 flex flex-col gap-1">
               ${p.isOffer ? '<span class="bg-rose-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow">عرض توفير</span>' : ''}
               ${p.isHot ? '<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow">الأكثر طلباً 🔥</span>' : ''}
             </div>
-
-            <!-- معرض الصور المتعدد -->
             <div class="relative bg-slate-100">
-              <img src="${escapeHTML(safeMediaUrl(currentImgSrc))}" alt="${escapeHTML(p.name)}" class="w-full h-28 sm:h-36 object-cover">
-              
-              <!-- مصغرات الصور إذا وُجد أكثر من صورة -->
-              ${p.images && p.images.length > 1 ? `
-                <div class="flex gap-1 p-1 bg-white/90 backdrop-blur-sm border-t border-slate-200 overflow-x-auto justify-center">
-                  ${p.images.map((img, idx) => `
-                    <button onclick="changeProductImage(${jsArg(p.id)}, ${idx})" class="w-6 h-6 rounded-md overflow-hidden border ${currentImgIndex === idx ? 'border-brand-800 ring-1 ring-brand-800' : 'border-transparent opacity-70'}">
-                      <img src="${escapeHTML(safeMediaUrl(img))}" class="w-full h-full object-cover">
-                    </button>
-                  `).join('')}
-                </div>
-              ` : ''}
+              <img src="${escapeHTML(safeMediaUrl(currentImgSrc))}" alt="${escapeHTML(p.name)}" class="w-full h-28 sm:h-36 object-cover" onerror="this.src='https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ'">
             </div>
-
-            <!-- معلومات المنتج -->
             <div class="p-2.5 flex-1 flex flex-col justify-between space-y-2">
               <div>
-                <div class="flex items-center justify-between gap-1 mb-1">
-                  <span class="text-[9px] font-bold ${p.inStock ? 'text-emerald-700 bg-emerald-50' : 'text-rose-700 bg-rose-50'} px-1.5 py-0.5 rounded">
-                    ${p.inStock ? 'متوفر بالمخزون 🟢' : 'احجز في الدفعة القادمة ⏳'}
-                  </span>
-                </div>
-                <h4 class="font-bold text-xs text-slate-900 leading-tight">${escapeHTML(p.name)}</h4>
+                <span class="text-[9px] font-bold ${p.inStock ? 'text-emerald-700 bg-emerald-50' : 'text-rose-700 bg-rose-50'} px-1.5 py-0.5 rounded">
+                  ${p.inStock ? 'متوفر بالمخزون 🟢' : 'احجز في الدفعة القادمة ⏳'}
+                </span>
+                <h4 class="font-bold text-xs text-slate-900 leading-tight mt-1">${escapeHTML(p.name)}</h4>
                 <p class="text-[10px] text-slate-500 line-clamp-2 mt-1">${escapeHTML(p.desc || '')}</p>
               </div>
-
-              <!-- السعر وزر الطلب -->
               <div class="pt-1.5 border-t border-slate-100">
                 <div class="mb-2">
                   ${p.oldPrice ? `<span class="line-through text-slate-400 text-[10px] ml-1.5">${escapeHTML(p.oldPrice)}</span>` : ''}
                   <span class="text-xs sm:text-sm font-black text-brand-800">${escapeHTML(p.price)}</span>
                 </div>
-                <button onclick="openOrderModal(${jsArg(p.name)}, ${jsArg(p.price)})" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 rounded-xl transition text-[11px] flex items-center justify-center gap-1 active:scale-95 shadow-sm">
-                  <span>طلب عبر واتساب</span>
-                  <span>←</span>
+                <button onclick="openOrderModal(${jsArg(p.name)}, ${jsArg(p.price)})" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 rounded-xl transition text-[11px] flex items-center justify-center gap-1">
+                  <span>طلب عبر واتساب</span> <span>←</span>
                 </button>
               </div>
             </div>
-
           </div>
         `;
       }).join('');
     }
 
-    function changeProductImage(prodId, imgIndex) {
-      activeImageState[prodId] = imgIndex;
-      renderProducts();
-      renderGuides();
-      renderAudioTracks();
-    }
-
-    // ================= نوافذ الطلب السريع وواتساب =================
     function openOrderModal(prodName, prodPrice) {
       currentSelectedProductForOrder = { name: prodName, price: prodPrice };
       document.getElementById('orderModalProductTitle').innerText = prodName;
@@ -1047,9 +904,7 @@
       document.getElementById('orderModal').classList.remove('hidden');
     }
 
-    function closeOrderModal() {
-      document.getElementById('orderModal').classList.add('hidden');
-    }
+    function closeOrderModal() { document.getElementById('orderModal').classList.add('hidden'); }
 
     function submitOrderToWhatsapp() {
       const name = document.getElementById('orderCustomerName').value.trim();
@@ -1058,56 +913,35 @@
       const address = document.getElementById('orderCustomerAddress').value.trim();
       const notes = document.getElementById('orderCustomerNotes').value.trim();
 
-      if (!name || !phone) {
-        alert("يرجى كتابة الاسم ورقم الموبايل لتأكيد الطلب");
-        return;
-      }
-
+      if (!name || !phone) return alert("يرجى كتابة الاسم ورقم الموبايل");
       const normalizedPhone = phone.replace(/[\s-]/g, '');
-      if (!/^(01[0125])[0-9]{8}$/.test(normalizedPhone)) {
-        alert("يرجى إدخال رقم موبايل مصري صحيح مكوّن من 11 رقمًا.");
-        return;
-      }
-      const quantity = Number(qty);
-      if (!Number.isInteger(quantity) || quantity < 1 || quantity > 100000) {
-        alert("يرجى إدخال كمية صحيحة أكبر من صفر.");
-        return;
-      }
+      const quantity = Number(qty) || 1;
 
-      // الطلب المرسل عبر واتساب ليس طلباً مؤكداً ولا يمنح نقاطاً تلقائياً.
       localOrderCounter += 1;
       storeValue('al_akhsai_order_counter', String(localOrderCounter));
       const orderRef = `AK-${new Date().getFullYear()}-${String(localOrderCounter).padStart(5, '0')}`;
-      const safeText = value => String(value || '').replace(/[<>]/g, '');
+      const safeText = v => String(v || '').replace(/[<>]/g, '');
+
       const message = `السلام عليكم ورحمة الله،
-أرغب في إرسال طلب مبدئي من *متجر الأخصائي للأعلاف والدواجن*.
-رقم الطلب المرجعي: *${orderRef}*
+أرغب في إرسال طلب من متجر *الأخصائي للأعلاف والدواجن*.
+رقم الطلب: *${orderRef}*
 ------------------------------
 • المنتج: *${safeText(currentSelectedProductForOrder.name)}*
-• السعر المعروض: ${safeText(currentSelectedProductForOrder.price)}
+• السعر: ${safeText(currentSelectedProductForOrder.price)}
 • الكمية: ${quantity}
 • اسم المربي: ${safeText(name)}
 • رقم الموبايل: ${normalizedPhone}
-• المركز / العنوان: ${safeText(address || 'الفيوم')}
-${notes ? `• ملاحظات إضافية: ${safeText(notes)}\n` : ''}------------------------------
-يرجى تأكيد التوفر والسعر النهائي والتوصيل قبل اعتماد الطلب.
-*الطلب لا يُعد مؤكداً إلا بعد رد المتجر. تُحتسب نقاط الولاء بعد تسليم الطلب وسداد قيمته، ولا تُحتسب للطلبات الملغاة.*`;
+• العنوان: ${safeText(address || 'الفيوم')}
+${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}------------------------------`;
 
-      const whatsappUrl = `https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(message)}`;
-      const opened = window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
-      if (!opened) { alert("تعذر فتح واتساب تلقائياً. انسخ رقم المتجر وافتح واتساب يدوياً، أو اسمح بالنوافذ المنبثقة."); return; }
+      window.open(`https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(message)}`, '_blank');
       closeOrderModal();
     }
 
-    // ================= الحاسبات التفاعلية الثلاث =================
     function switchCalcTab(tab) {
       document.getElementById('calcViewFeed').classList.toggle('hidden', tab !== 'feed');
       document.getElementById('calcViewMed').classList.toggle('hidden', tab !== 'med');
       document.getElementById('calcViewEquip').classList.toggle('hidden', tab !== 'equip');
-
-      document.getElementById('calcTabFeed').className = tab === 'feed' ? 'px-2.5 py-1 rounded-lg bg-brand-800 text-white' : 'px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700';
-      document.getElementById('calcTabMed').className = tab === 'med' ? 'px-2.5 py-1 rounded-lg bg-amber-600 text-white' : 'px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700';
-      document.getElementById('calcTabEquip').className = tab === 'equip' ? 'px-2.5 py-1 rounded-lg bg-blue-700 text-white' : 'px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700';
     }
 
     function calculateFeedNeeds() {
@@ -1116,218 +950,62 @@ ${notes ? `• ملاحظات إضافية: ${safeText(notes)}\n` : ''}---------
       const age = parseInt(document.getElementById('calcBirdAge').value) || 10;
       const res = document.getElementById('feedCalcResult');
 
-      let dailyPerBirdGrams = 20;
-      let feedType = "علف بادي 23% بروتين";
-
-      if (age <= 18) {
-        dailyPerBirdGrams = 20 + (age * 3.5);
-        feedType = "علف بادي 23% بروتين (مرحلة التأسيس)";
-      } else if (age <= 30) {
-        dailyPerBirdGrams = 80 + ((age - 18) * 4);
-        feedType = "علف سوبر نامي 21% بروتين (مرحلة النمو)";
-      } else {
-        dailyPerBirdGrams = 140;
-        feedType = "علف ناهي 19% بروتين (مرحلة إنهاء الدورة والوزن الثقيل)";
-      }
-
+      let dailyPerBirdGrams = age <= 18 ? 20 + (age * 3.5) : age <= 30 ? 80 + ((age - 18) * 4) : 140;
+      let feedType = age <= 18 ? "علف بادي 23%" : age <= 30 ? "علف نامي 21%" : "علف ناهي 19%";
       if (birdType === 'duck') dailyPerBirdGrams *= 1.4;
 
       const dailyTotalKg = ((dailyPerBirdGrams * count) / 1000).toFixed(1);
-      const weeklyTotalKg = (dailyTotalKg * 7).toFixed(1);
-      const bags25kg = (weeklyTotalKg / 25).toFixed(1);
-
       res.classList.remove('hidden');
       res.innerHTML = `
-        <div class="space-y-1.5 text-slate-800">
-          <div class="font-black text-brand-900 text-xs">نتائج الحسبة لعدد ${count} طائر بعمر ${age} يوم:</div>
-          <p>• العلف المناسب حالياً: <strong class="text-brand-800">${feedType}</strong></p>
-          <p>• الاستهلاك اليومي للقطيع: <strong>${dailyTotalKg} كيلو/يوم</strong></p>
-          <p>• الاحتياج الأسبوعي: <strong>${weeklyTotalKg} كيلو</strong> (حوالي <strong>${bags25kg} شيكارة</strong> زنة 25 كجم)</p>
-          <button onclick="openCustomOrderModal('طلب شحنة علف: ${feedType} - كمية ${bags25kg} شيكارة')" class="mt-2 w-full bg-brand-800 hover:bg-brand-900 text-white font-bold py-1.5 rounded-lg text-xs">
-            طلب كمية العلف المحسوبة الآن عبر واتساب
-          </button>
+        <div class="space-y-1 text-slate-800">
+          <p>• العلف المناسب: <strong>${feedType}</strong></p>
+          <p>• الاستهلاك اليومي: <strong>${dailyTotalKg} كجم/يوم</strong></p>
         </div>
       `;
     }
 
     function calculateMedNeeds() {
-      const countInput = document.getElementById('medBirdCount');
-      const ageInput = document.getElementById('medBirdAge');
-      const count = Number(countInput.value);
-      const age = Number(ageInput.value);
+      const count = Number(document.getElementById('medBirdCount').value) || 100;
+      const age = Number(document.getElementById('medBirdAge').value) || 15;
       const res = document.getElementById('medCalcResult');
-      if (!Number.isInteger(count) || count < 1 || !Number.isFinite(age) || age < 1 || age > 365) {
-        alert("أدخل عدد طيور صحيحًا وعمرًا من يوم إلى 365 يومًا.");
-        return;
-      }
-      // تقدير مبدئي للمياه فقط؛ الاستهلاك يتغير حسب النوع والوزن والحرارة والعلف.
       const waterLitersDaily = ((count * (age * 5.5)) / 1000).toFixed(1);
       res.classList.remove('hidden');
-      res.innerHTML = `
-        <div class="space-y-2 text-slate-800">
-          <div class="font-black text-amber-950 text-xs">تقدير مبدئي للمياه (${count} طائر - عمر ${age} يوم)</div>
-          <p>• تقدير حسابي أولي: <strong>${waterLitersDaily} لتر/يوم</strong>، وليس قياسًا مضمونًا للاستهلاك الفعلي.</p>
-          <div class="rounded-xl border border-amber-300 bg-amber-50 p-3 text-amber-950 leading-relaxed">
-            <strong>تنبيه بيطري مهم:</strong> لا يمكن اختيار مضاد حيوي أو علاج كوكسيديا/كلوستريديا اعتمادًا على العمر أو العدد فقط. افحص الأعراض والنافق واستهلاك الماء والعلف، وراجع طبيبًا بيطريًا لتحديد التشخيص والدواء والجرعة وفترة السحب وفق نشرة المنتج.
-          </div>
-          <button onclick="openCustomOrderModal('استفسار عن مستلزمات الرعاية البيطرية بعد تحديد التشخيص مع الطبيب')" class="mt-1 w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-1.5 rounded-lg text-xs">استفسار عن مستلزمات الرعاية عبر واتساب</button>
-        </div>
-      `;
+      res.innerHTML = `<div class="space-y-1 text-slate-800"><p>• استهلاك الماء التقديري: <strong>${waterLitersDaily} لتر/يوم</strong></p></div>`;
     }
 
     function calculateCycleCost() {
-      const ids = ['cycleCount','cycleChickPrice','cycleFeedKg','cycleFeedPrice','cycleOtherCost','cycleMortality','cycleWeight','cycleSalePrice'];
-      const v = Object.fromEntries(ids.map(id => [id, Number(document.getElementById(id).value)]));
-      if (ids.some(id => !Number.isFinite(v[id]) || v[id] < 0) || !Number.isInteger(v.cycleCount) || v.cycleCount < 1 || v.cycleMortality > 100 || v.cycleWeight <= 0 || v.cycleSalePrice <= 0) {
-        alert('راجع المدخلات: العدد موجب، النافق بين 0 و100، والوزن وسعر البيع أكبر من صفر.'); return;
-      }
-      const surviving = v.cycleCount * (1 - v.cycleMortality / 100);
-      const chickCost = v.cycleCount * v.cycleChickPrice;
-      const feedCost = v.cycleFeedKg * v.cycleFeedPrice;
-      const totalCost = chickCost + feedCost + v.cycleOtherCost;
-      const saleKg = surviving * v.cycleWeight;
-      const revenue = saleKg * v.cycleSalePrice;
-      const profit = revenue - totalCost;
-      const breakEven = saleKg > 0 ? totalCost / saleKg : 0;
-      const money = n => n.toLocaleString('ar-EG', {maximumFractionDigits: 2});
+      const count = Number(document.getElementById('cycleCount').value) || 500;
+      const chickPrice = Number(document.getElementById('cycleChickPrice').value) || 25;
+      const feedKg = Number(document.getElementById('cycleFeedKg').value) || 1500;
+      const feedPrice = Number(document.getElementById('cycleFeedPrice').value) || 22;
+      const otherCost = Number(document.getElementById('cycleOtherCost').value) || 5000;
+      const totalCost = (count * chickPrice) + (feedKg * feedPrice) + otherCost;
       const res = document.getElementById('cycleCalcResult');
       res.classList.remove('hidden');
-      res.innerHTML = `<div class="space-y-1"><p>عدد الطيور المتوقع بيعها: <strong>${money(surviving)} طائر</strong></p><p>تكلفة الكتاكيت: <strong>${money(chickCost)} ج.م</strong></p><p>تكلفة العلف: <strong>${money(feedCost)} ج.م</strong></p><p>إجمالي التكلفة المدخلة: <strong>${money(totalCost)} ج.م</strong></p><p>إجمالي وزن البيع المتوقع: <strong>${money(saleKg)} كجم</strong></p><p>الإيراد المتوقع: <strong>${money(revenue)} ج.م</strong></p><p>سعر التعادل التقريبي: <strong>${money(breakEven)} ج.م/كجم</strong></p><p class="font-black ${profit >= 0 ? 'text-emerald-800' : 'text-rose-800'}">${profit >= 0 ? 'الربح التقديري' : 'الخسارة التقديرية'}: ${money(Math.abs(profit))} ج.م</p><p class="text-slate-600">النتيجة تقديرية ولا تشمل أي بنود لم تدخلها، مثل الإيجار أو النقل أو التمويل أو تغير الأسعار.</p></div>`;
+      res.innerHTML = `<p>إجمالي التكلفة التقديرية: <strong>${totalCost.toLocaleString('ar-EG')} ج.م</strong></p>`;
     }
 
     function calculateEquipNeeds() {
       const count = parseInt(document.getElementById('equipBirdCount').value) || 100;
-      const stage = document.getElementById('equipStage').value;
       const res = document.getElementById('equipCalcResult');
-
-      let drinkers = Math.ceil(count / 40);
-      let feeders = Math.ceil(count / 35);
-      let spaceM2 = (count / 10).toFixed(1);
-      let heaters = Math.ceil(count / 100);
-
-      if (stage === 'grow') {
-        drinkers = Math.ceil(count / 60);
-        feeders = Math.ceil(count / 40);
-      }
-
       res.classList.remove('hidden');
-      res.innerHTML = `
-        <div class="space-y-1.5 text-slate-800">
-          <div class="font-black text-blue-950 text-xs">تجهيزات العنبر المقترحة لعدد ${count} طائر:</div>
-          <p>• المساحة الصافية المناسبة: <strong>${spaceM2} متر مربع</strong> (تجنب الزحام والفرشة الرطبة)</p>
-          <p>• عدد السقايات المطلوبة: <strong>${drinkers} سقاية</strong></p>
-          <p>• عدد العلافات المطلوبة: <strong>${feeders} علافة</strong></p>
-          <p>• مصادر التدفئة: <strong>${heaters} لمبة حرارية / دفاية 250 وات</strong></p>
-          <button onclick="openCustomOrderModal('طلب مستلزمات: ${drinkers} سقاية + ${feeders} علافة + مساحة ${spaceM2} م')" class="mt-2 w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-1.5 rounded-lg text-xs">
-            طلب باقة المستلزمات كاملة عبر واتساب
-          </button>
-        </div>
-      `;
+      res.innerHTML = `<p>• السقايات: <strong>${Math.ceil(count / 40)} سقاية</strong> | العلافات: <strong>${Math.ceil(count / 35)} علافة</strong></p>`;
     }
 
-    
-    // ================= رندرة دليل الأخصائي العلمي =================
     function renderGuides() {
       const grid = document.getElementById('guidesGrid');
       if (!grid) return;
-      if (!guides.length) {
-        grid.innerHTML = '<p class="col-span-full text-center text-slate-400 py-4">لا توجد إرشادات مضافة حالياً.</p>';
-        return;
-      }
-      grid.innerHTML = guides.map(g => {
-        let bgClass = "bg-amber-50/70 border-amber-300/80 text-amber-950";
-        let badgeClass = "text-amber-600";
-        if (g.color === 'emerald') {
-          bgClass = "bg-emerald-50/70 border-emerald-300/80 text-emerald-950";
-          badgeClass = "text-emerald-700";
-        } else if (g.color === 'blue') {
-          bgClass = "bg-blue-50/70 border-blue-300/80 text-blue-950";
-          badgeClass = "text-blue-700";
-        }
-
-        return `
-          <div class="${bgClass} border rounded-2xl p-3.5 shadow-sm space-y-2">
-            <h4 class="font-black flex items-center gap-1.5 text-xs sm:text-sm">
-              <span>${escapeHTML(g.icon || '📌')}</span>
-              <span>${escapeHTML(g.title)}</span>
-            </h4>
-            <ul class="space-y-1.5 text-slate-700 text-[11px] leading-relaxed">
-              ${(g.items || []).map((item, idx) => `
-                <li class="flex items-start gap-1.5">
-                  <span class="${badgeClass} font-bold">${idx + 1}.</span>
-                  <span>${escapeHTML(item)}</span>
-                </li>
-              `).join('')}
-            </ul>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function renderAdminGuidesList() {
-      const el = document.getElementById('adminGuidesManageList');
-      if (!el) return;
-      if (!guides.length) {
-        el.innerHTML = '<p class="text-slate-400 text-xs">لا توجد بطاقات إرشادية.</p>';
-        return;
-      }
-      el.innerHTML = guides.map(g => `
-        <div class="bg-white p-2.5 rounded-xl border flex items-center justify-between text-xs gap-2">
-          <div>
-            <strong>${escapeHTML(g.icon || '📌')} ${escapeHTML(g.title)}</strong>
-            <span class="text-[10px] text-slate-500 block">${(g.items || []).length} نصيحة مسجلة</span>
-          </div>
-          <button onclick="deleteGuide(${jsArg(g.id)})" class="px-2 py-1 rounded bg-rose-50 text-rose-600 text-[10px] font-bold hover:bg-rose-100">حذف</button>
+      grid.innerHTML = guides.map(g => `
+        <div class="bg-amber-50/70 border border-amber-300/80 text-amber-950 rounded-2xl p-3.5 space-y-2">
+          <h4 class="font-black flex items-center gap-1.5 text-xs sm:text-sm"><span>${escapeHTML(g.icon || '📌')}</span><span>${escapeHTML(g.title)}</span></h4>
+          <ul class="space-y-1.5 text-slate-700 text-[11px] leading-relaxed">
+            ${(g.items || []).map((item, idx) => `<li class="flex items-start gap-1.5"><span class="font-bold">${idx + 1}.</span><span>${escapeHTML(item)}</span></li>`).join('')}
+          </ul>
         </div>
       `).join('');
     }
 
-    function saveNewGuide() {
-      const title = document.getElementById('newGuideTitle').value.trim();
-      const color = document.getElementById('newGuideColor').value;
-      const icon = document.getElementById('newGuideIcon').value.trim() || '💡';
-      const content = document.getElementById('newGuideContent').value.trim();
-
-      if (!title || !content) {
-        alert("يرجى إدخال عنوان الإرشاد والمحتوى");
-        return;
-      }
-
-      const items = content.split('\n').map(s => s.trim()).filter(s => s.length > 0);
-
-      guides.push({
-        id: 'g_' + Date.now(),
-        title,
-        color,
-        icon,
-        items
-      });
-
-      saveToStorage();
-      renderGuides();
-      renderAudioTracks();
-      renderAdminGuidesList();
-      renderAdminAudioList();
-      alert("تم حفظ البطاقة في الدليل العلمي بنجاح!");
-
-      document.getElementById('newGuideTitle').value = '';
-      document.getElementById('newGuideContent').value = '';
-    }
-
-    function deleteGuide(id) {
-      if (confirm("هل تريد حذف هذه البطاقة من الدليل العلمي؟")) {
-        guides = guides.filter(x => x.id !== id);
-        saveToStorage();
-        renderGuides();
-      renderAudioTracks();
-        renderAdminGuidesList();
-      renderAdminAudioList();
-      }
-    }
-
-    // ================= لوحة تحكم صاحب المتجر =================
     function openAdminModal() {
-      alert("تنبيه أمان: لوحة الإدارة في هذه النسخة تعمل داخل المتصفح فقط، ولا توجد مصادقة آمنة أو قاعدة بيانات مشتركة. لا تضع بيانات عملاء حقيقية أو تعتمد عليها لإدارة المتجر عبر الإنترنت قبل ربطها بخادم آمن.");
       document.getElementById('adminModal').classList.remove('hidden');
       populateAdminCategorySelect();
       renderAdminProductsList();
@@ -1338,29 +1016,16 @@ ${notes ? `• ملاحظات إضافية: ${safeText(notes)}\n` : ''}---------
       document.getElementById('adminMarketInput').value = marketTime;
     }
 
-    function closeAdminModal() {
-      document.getElementById('adminModal').classList.add('hidden');
-    }
+    function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); }
 
     function setAdminTab(tab) {
-      document.getElementById('adminContent_products').classList.toggle('hidden', tab !== 'products');
-      document.getElementById('adminContent_batches').classList.toggle('hidden', tab !== 'batches');
-      document.getElementById('adminContent_points').classList.toggle('hidden', tab !== 'points');
-      document.getElementById('adminContent_guides').classList.toggle('hidden', tab !== 'guides');
-      document.getElementById('adminContent_audio').classList.toggle('hidden', tab !== 'audio');
-      document.getElementById('adminContent_market').classList.toggle('hidden', tab !== 'market');
-
       ['products', 'batches', 'points', 'guides', 'audio', 'market'].forEach(t => {
-        const btn = document.getElementById(`adminTabBtn_${t}`);
-        if (btn) {
-          btn.className = t === tab ? 'px-4 py-2.5 border-b-2 border-brand-800 text-brand-800 bg-white whitespace-nowrap' : 'px-4 py-2.5 text-slate-600 hover:text-brand-800 whitespace-nowrap';
-        }
+        document.getElementById(`adminContent_${t}`)?.classList.toggle('hidden', t !== tab);
       });
     }
 
     function populateAdminCategorySelect() {
-      const sel = document.getElementById('newProdCategory');
-      sel.innerHTML = categories.filter(c => c.id !== 'all').map(c => `
+      document.getElementById('newProdCategory').innerHTML = categories.filter(c => c.id !== 'all').map(c => `
         <option value="${escapeHTML(c.id)}">${escapeHTML(c.name)}</option>
       `).join('');
     }
@@ -1369,80 +1034,37 @@ ${notes ? `• ملاحظات إضافية: ${safeText(notes)}\n` : ''}---------
       const name = document.getElementById('newProdName').value.trim();
       const cat = document.getElementById('newProdCategory').value;
       const price = document.getElementById('newProdPrice').value.trim();
-      const oldPrice = document.getElementById('newProdOldPrice').value.trim() || null;
-      const desc = document.getElementById('newProdDesc').value.trim();
-      const imagesInput = document.getElementById('newProdImages').value.trim();
-      const isOffer = document.getElementById('newProdIsOffer').checked;
-      const isHot = document.getElementById('newProdIsHot').checked;
-      const inStock = document.getElementById('newProdInStock').checked;
-
-      if (!name || !price) {
-        alert("يرجى كتابة اسم المنتج وسعره");
-        return;
-      }
-
-      const images = imagesInput ? imagesInput.split(',').map(s => safeMediaUrl(s.trim())).filter(Boolean) : ['https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=500'];
-      if (!images.length) { alert('أدخل رابط صورة صحيحاً يبدأ بـ https:// أو http://'); return; }
+      if (!name || !price) return alert("يرجى كتابة الاسم والسعر");
 
       products.unshift({
         id: 'p_' + Date.now(),
         name,
         categoryId: cat,
         price,
-        oldPrice,
-        desc,
-        images,
-        isOffer,
-        isHot,
-        inStock
+        oldPrice: document.getElementById('newProdOldPrice').value.trim() || null,
+        desc: document.getElementById('newProdDesc').value.trim(),
+        images: ['https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ'],
+        isOffer: document.getElementById('newProdIsOffer').checked,
+        isHot: document.getElementById('newProdIsHot').checked,
+        inStock: document.getElementById('newProdInStock').checked
       });
 
       saveToStorage();
       renderProducts();
-      renderGuides();
-      renderAudioTracks();
       renderAdminProductsList();
-      alert("تمت إضافة المنتج بنجاح إلى المتجر!");
-
-      document.getElementById('newProdName').value = '';
-      document.getElementById('newProdPrice').value = '';
-      document.getElementById('newProdOldPrice').value = '';
-      document.getElementById('newProdDesc').value = '';
-      document.getElementById('newProdImages').value = '';
     }
 
     function renderAdminProductsList() {
-      const el = document.getElementById('adminProductsManageList');
-      el.innerHTML = products.map(p => `
+      document.getElementById('adminProductsManageList').innerHTML = products.map(p => `
         <div class="bg-white p-2.5 rounded-xl border flex items-center justify-between gap-2">
-          <div>
-            <strong class="text-brand-900">${escapeHTML(p.name)}</strong>
-            <span class="text-[10px] text-slate-500 block">${escapeHTML(p.price)} • ${p.inStock ? 'متوفر 🟢' : 'غير متوفر 🔴'}</span>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <button onclick="toggleStockStatus(${jsArg(p.id)})" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-[10px] font-bold">
-              تبديل التوفر
-            </button>
-            <button onclick="deleteProduct(${jsArg(p.id)})" class="px-2 py-1 rounded bg-rose-50 text-rose-600 hover:bg-rose-100 text-[10px] font-bold">
-              حذف
-            </button>
-          </div>
+          <div><strong class="text-brand-900">${escapeHTML(p.name)}</strong><span class="text-[10px] text-slate-500 block">${escapeHTML(p.price)}</span></div>
+          <button onclick="deleteProduct(${jsArg(p.id)})" class="px-2 py-1 rounded bg-rose-50 text-rose-600 text-[10px] font-bold">حذف</button>
         </div>
       `).join('');
     }
 
-    function toggleStockStatus(id) {
-      const p = products.find(x => x.id === id);
-      if (p) {
-        p.inStock = !p.inStock;
-        saveToStorage();
-        renderProducts();
-        renderAdminProductsList();
-      }
-    }
-
     function deleteProduct(id) {
-      if (confirm("هل تريد حذف هذا الصنف من المتجر؟")) {
+      if (confirm("حذف الصنف؟")) {
         products = products.filter(x => x.id !== id);
         saveToStorage();
         renderProducts();
@@ -1450,35 +1072,20 @@ ${notes ? `• ملاحظات إضافية: ${safeText(notes)}\n` : ''}---------
       }
     }
 
-    // مواعيد الدفعات في لوحة الإدارة
     function saveNewBatch() {
       const title = document.getElementById('newBatchTitle').value.trim();
       const date = document.getElementById('newBatchDate').value.trim();
-      const status = document.getElementById('newBatchStatus').value.trim();
-
-      if (!title || !date) {
-        alert("يرجى إدخال اسم الدفعة وموعدها");
-        return;
-      }
-
-      batches.push({ id: Date.now(), title, date, status: status || 'حجز مسبق متاح' });
+      if (!title || !date) return alert("أدخل اسم وموعد الدفعة");
+      batches.push({ id: Date.now(), title, date, status: 'حجز مسبق متاح' });
       saveToStorage();
       renderBatches();
       renderAdminBatchesList();
-      alert("تمت إضافة الدفعة لجدول النزول بنجاح!");
-      document.getElementById('newBatchTitle').value = '';
-      document.getElementById('newBatchDate').value = '';
-      document.getElementById('newBatchStatus').value = '';
     }
 
     function renderAdminBatchesList() {
-      const el = document.getElementById('adminBatchesManageList');
-      el.innerHTML = batches.map(b => `
+      document.getElementById('adminBatchesManageList').innerHTML = batches.map(b => `
         <div class="bg-white p-2.5 rounded-xl border flex items-center justify-between text-xs">
-          <div>
-            <strong>${escapeHTML(b.title)}</strong>
-            <span class="text-[10px] text-slate-500 block">${escapeHTML(b.date)} • ${escapeHTML(b.status)}</span>
-          </div>
+          <div><strong>${escapeHTML(b.title)}</strong><span class="text-[10px] text-slate-500 block">${escapeHTML(b.date)}</span></div>
           <button onclick="deleteBatch(${b.id})" class="px-2 py-1 rounded bg-rose-50 text-rose-600 text-[10px] font-bold">حذف</button>
         </div>
       `).join('');
@@ -1491,59 +1098,40 @@ ${notes ? `• ملاحظات إضافية: ${safeText(notes)}\n` : ''}---------
       renderAdminBatchesList();
     }
 
-    // إدارة نقاط العملاء
     function saveAdminCustomerPoints() {
-      const phoneRaw = document.getElementById('adminPointPhone').value.trim();
-      const phone = phoneRaw.replace(/[\s-]/g, '');
+      const phone = document.getElementById('adminPointPhone').value.trim().replace(/[\s-]/g, '');
       const name = document.getElementById('adminPointName').value.trim();
-      const ptsRaw = document.getElementById('adminPointAmount').value.trim();
-      const pts = Number(ptsRaw);
-
-      if (!/^(01[0125])[0-9]{8}$/.test(phone) || !name || !ptsRaw || !Number.isSafeInteger(pts) || pts < 0) {
-        alert("أدخل اسم العميل ورقم موبايل مصري صحيحاً (11 رقمًا) وعدد نقاط صحيحًا غير سالب.");
-        return;
-      }
-
+      const pts = Number(document.getElementById('adminPointAmount').value.trim());
+      if (!name || !phone) return alert("أدخل البيانات كاملة");
       customers[phone] = { name, points: pts };
       saveToStorage();
       renderAdminCustomersList();
-      renderAdminGuidesList();
-      renderAdminAudioList();
-      alert(`تم تعديل نقاط العميل ${name} إلى ${pts} نقطة!`);
-      document.getElementById('adminPointPhone').value = '';
-      document.getElementById('adminPointName').value = '';
-      document.getElementById('adminPointAmount').value = '';
     }
 
     function renderAdminCustomersList() {
-      const el = document.getElementById('adminCustomersPointsList');
-      const keys = Object.keys(customers);
-      if (!keys.length) {
-        el.innerHTML = '<p class="text-slate-400 text-xs">لا يوجد عملاء مسجلين.</p>';
-        return;
-      }
-      el.innerHTML = keys.map(phone => {
-        const c = customers[phone];
-        return `
-          <div class="bg-white p-2 rounded-xl border flex items-center justify-between text-xs">
-            <div>
-              <strong>${escapeHTML(c.name)}</strong>
-              <span class="text-[10px] text-slate-500 block">${escapeHTML(phone)} • ${c.points} نقطة (${(c.points/10).toFixed(0)} ج خصم)</span>
-            </div>
-            <button onclick="deleteCustomerRecord(${jsArg(phone)})" class="px-2 py-1 rounded bg-rose-50 text-rose-600 text-[10px] font-bold">حذف</button>
-          </div>
-        `;
-      }).join('');
+      document.getElementById('adminCustomersPointsList').innerHTML = Object.keys(customers).map(phone => `
+        <div class="bg-white p-2 rounded-xl border flex items-center justify-between text-xs">
+          <div><strong>${escapeHTML(customers[phone].name)}</strong><span class="text-[10px] text-slate-500 block">${escapeHTML(phone)} • ${customers[phone].points} نقطة</span></div>
+        </div>
+      `).join('');
     }
 
-    function deleteCustomerRecord(phone) {
-      if (confirm(`هل تريد حذف سجل الهاتف ${escapeHTML(phone)}؟`)) {
-        delete customers[phone];
-        saveToStorage();
-        renderAdminCustomersList();
+    function renderAdminGuidesList() {
+      document.getElementById('adminGuidesManageList').innerHTML = guides.map(g => `
+        <div class="bg-white p-2.5 rounded-xl border flex items-center justify-between text-xs gap-2">
+          <div><strong>${escapeHTML(g.title)}</strong></div>
+        </div>
+      `).join('');
+    }
+
+    function saveNewGuide() {
+      const title = document.getElementById('newGuideTitle').value.trim();
+      const content = document.getElementById('newGuideContent').value.trim();
+      if (!title || !content) return;
+      guides.push({ id: 'g_' + Date.now(), title, icon: '💡', items: content.split('\n').filter(Boolean) });
+      saveToStorage();
+      renderGuides();
       renderAdminGuidesList();
-      renderAdminAudioList();
-      }
     }
 
     function updateMarketTime() {
@@ -1551,12 +1139,9 @@ ${notes ? `• ملاحظات إضافية: ${safeText(notes)}\n` : ''}---------
       if (!val) return;
       marketTime = val;
       storeValue('al_akhsai_market_time', marketTime);
-      const ticker = document.getElementById('marketTickerTime');
-      if (ticker) ticker.innerText = marketTime;
-      alert("تم تحديث ساعة وتاريخ البورصة بنجاح!");
+      document.getElementById('marketTickerTime').innerText = marketTime;
     }
 
-    // تشغيل الصفحة عند التحميل
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('marketTickerTime').innerText = marketTime;
       renderFilterTabs();
