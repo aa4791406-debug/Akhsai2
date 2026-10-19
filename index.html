@@ -1,473 +1,1291 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الأخصائي للأعلاف والدواجن</title>
-    <!-- خط القاهرة من جوجل -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- مكتبة Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        :root {
-            --primary: #1A4D2E;
-            --primary-light: #4F6F52;
-            --accent: #E8C872;
-            --bg: #F9F9F6;
-            --card-bg: #FFFFFF;
-            --text: #2D3748;
-            --text-light: #718096;
-            --border: #E2E8F0;
-            --radius: 12px;
-            --shadow: 0 4px 15px rgba(0,0,0,0.05);
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الأخصائي للأعلاف والدواجن | متجر متكامل ودليل المربي</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              700: '#1e5e45',
+              800: '#154734',
+              850: '#103929',
+              900: '#0b291d',
+              gold: '#d4af37',
+              golddark: '#b89222',
+              goldlight: '#fff9e6',
+              accent: '#f39c12',
+            }
+          }
         }
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Cairo', sans-serif;
-        }
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-        }
-        /* الهيدر والتنقل */
-        header {
-            background-color: var(--primary);
-            color: white;
-            padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        nav button {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        nav button:hover, nav button.active {
-            background-color: var(--accent);
-            color: var(--primary);
-            border-color: var(--accent);
-        }
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-        /* شبكة المنتجات */
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-        .product-card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s;
-        }
-        .product-card:hover {
-            transform: translateY(-5px);
-        }
-        .product-img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            background-color: #f0f0f0;
-        }
-        .product-info {
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-        .product-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        .product-category {
-            font-size: 0.85rem;
-            color: var(--text-light);
-            margin-bottom: 0.5rem;
-        }
-        .product-price {
-            font-size: 1.25rem;
-            color: var(--primary);
-            font-weight: 700;
-            margin-top: auto;
-            margin-bottom: 1rem;
-        }
-        .btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.6rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            width: 100%;
-            transition: background 0.2s;
-        }
-        .btn:hover {
-            background-color: var(--primary-light);
-        }
-        /* السلة والتأكيد */
-        .cart-section, .admin-section {
-            background: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            margin-top: 1.5rem;
-        }
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 1rem;
-        }
-        /* الجداول */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-        table th, table td {
-            padding: 0.75rem;
-            text-align: right;
-            border-bottom: 1px solid var(--border);
-        }
-        table th {
-            background-color: #F0F4F1;
-            color: var(--primary);
-        }
-        .hidden {
-            display: none !important;
-        }
-        /* تنبيه حالة الاتصال */
-        .status-bar {
-            background-color: #EBF8FF;
-            color: #2B6CB0;
-            padding: 0.5rem 1rem;
-            text-align: center;
-            font-size: 0.9rem;
-            border-bottom: 1px solid #BEE3F8;
-        }
-    </style>
+      }
+    }
+  </script>
+  <!-- مكتبة Supabase السحابية -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
+    * { font-family: 'Cairo', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { height: 4px; width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  </style>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-800 antialiased pb-28">
 
-    <div id="status-bar" class="status-bar">جاري التحقق من الاتصال بقاعدة البيانات...</div>
+  <!-- ================= 1. الشريط العلوي والهيدر ================= -->
+  <header class="sticky top-0 z-50 bg-gradient-to-r from-brand-900 via-brand-850 to-brand-800 text-white shadow-md border-b border-brand-gold/30">
+    <div class="max-w-6xl mx-auto px-3 sm:px-4 py-2 flex items-center justify-between gap-2">
+      
+      <!-- زر مشغل الصوتيات -->
+      <div class="relative">
+        <button onclick="toggleAudioDropdown()" class="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 border border-brand-gold/60 text-white text-xs px-2.5 py-1.5 rounded-full transition active:scale-95 shadow-sm">
+          <span class="text-sm">🎧</span>
+          <span class="font-bold">الصوتيات</span>
+        </button>
 
-    <header>
-        <div class="header-container">
-            <div class="logo">🌾 الأخصائي للأعلاف والدواجن</div>
-            <nav>
-                <button id="nav-shop" class="active" onclick="switchView('shop')">المتجر</button>
-                <button id="nav-cart" onclick="switchView('cart')">السلة (<span id="cart-count">0</span>)</button>
-                <button id="nav-admin" onclick="switchView('admin')">لوحة الإدارة</button>
-            </nav>
+        <!-- نافذة الصوتيات المنسدلة -->
+        <div id="audioDropdown" class="hidden absolute right-0 mt-2 w-72 bg-white text-slate-800 rounded-2xl shadow-xl border border-slate-200 overflow-hidden z-50">
+          <div class="bg-brand-900 text-brand-gold text-xs font-black p-2.5 flex items-center justify-between">
+            <span>ركن الاستماع والمقاطع الصوتية</span>
+            <button onclick="toggleAudioDropdown()" class="text-slate-300 hover:text-white">✕</button>
+          </div>
+          <div class="p-2 space-y-1.5 text-xs max-h-64 overflow-y-auto custom-scrollbar" id="audioTracksList"></div>
+          <div id="audioStatus" class="text-[10px] text-center p-1.5 bg-slate-100 text-slate-600 border-t font-bold">المشغل جاهز</div>
         </div>
-    </header>
+      </div>
 
-    <div class="container">
-        <!-- واجهة المتجر -->
-        <section id="view-shop">
-            <h2>المنتجات المتاحة</h2>
-            <div id="products-list" class="products-grid">
-                <!-- يتم تحميل المنتجات ديناميكياً -->
-            </div>
-        </section>
+      <!-- عنوان المتجر -->
+      <div class="text-center flex-1">
+        <h1 class="text-sm sm:text-lg font-black tracking-wide text-brand-gold flex items-center justify-center gap-1">
+          <span>🌾</span>
+          <span>الأخصائي للأعلاف والدواجن</span>
+          <span>🐥</span>
+        </h1>
+        <p class="text-[10px] text-emerald-200 font-medium">كل ما تحتاجه مزرعتك وعنبرك بأعلى جودة وثقة</p>
+      </div>
 
-        <!-- واجهة السلة والدفع -->
-        <section id="view-cart" class="cart-section hidden">
-            <h2>سلة الشراء</h2>
-            <div id="cart-items"></div>
-            <h3 style="margin-top: 1rem;">إجمالي المبلغ: <span id="cart-total">0</span> جنيه</h3>
-            
-            <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid var(--border);">
-            
-            <h3>بيانات الطلب</h3>
-            <form id="checkout-form" onsubmit="handleCheckout(event)" style="margin-top: 1rem;">
-                <div class="form-group">
-                    <label>الاسم الكامل</label>
-                    <input type="text" id="cust-name" required placeholder="أدخل اسمك الكريم">
-                </div>
-                <div class="form-group">
-                    <label>رقم الهاتف</label>
-                    <input type="tel" id="cust-phone" required placeholder="01xxxxxxxx">
-                </div>
-                <div class="form-group">
-                    <label>العنوان بالتفصيل</label>
-                    <textarea id="cust-address" required rows="3" placeholder="المحافظة، المركز، القرية/الشارع..."></textarea>
-                </div>
-                <button type="submit" class="btn">تأكيد الطلب</button>
-            </form>
-        </section>
+      <!-- لوجو المتجر -->
+      <div class="flex-shrink-0">
+        <button onclick="openLogoModal()" title="اضغط لتكبير اللوجو" class="w-11 h-11 rounded-full overflow-hidden border-2 border-brand-gold shadow-md hover:scale-105 transition active:scale-95 flex items-center justify-center bg-white p-0.5">
+          <img src="https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ" alt="لوجو الأخصائي" class="w-full h-full object-cover rounded-full">
+        </button>
+      </div>
 
-        <!-- لوحة الإدارة -->
-        <section id="view-admin" class="admin-section hidden">
-            <h2>لوحة التحكم والإدارة</h2>
-            
-            <h3 style="margin-top: 1.5rem;">إضافة منتج جديد</h3>
-            <form id="add-product-form" onsubmit="handleAddProduct(event)" style="margin-top: 1rem;">
-                <div class="form-group">
-                    <label>اسم المنتج</label>
-                    <input type="text" id="prod-title" required>
-                </div>
-                <div class="form-group">
-                    <label>التصنيف</label>
-                    <select id="prod-category">
-                        <option>أعلاف مواشي ودواجن</option>
-                        <option>دواجن وطيور</option>
-                        <option>أدوية ومستلزمات بيطرية</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>السعر (جنيه)</label>
-                    <input type="number" id="prod-price" required>
-                </div>
-                <div class="form-group">
-                    <label>رابط الصورة</label>
-                    <input type="url" id="prod-image" placeholder="https://example.com/image.jpg">
-                </div>
-                <button type="submit" class="btn">إضافة المنتج</button>
-            </form>
+    </div>
+  </header>
 
-            <h3 style="margin-top: 2rem;">الطلبات الواردة</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>العميل</th>
-                        <th>الهاتف</th>
-                        <th>العنوان</th>
-                        <th>الإجمالي</th>
-                        <th>الحالة</th>
-                    </tr>
-                </thead>
-                <tbody id="orders-list">
-                    <!-- يتم تحميل الطلبات ديناميكياً -->
-                </tbody>
-            </table>
-        </section>
+  <!-- نافذة تكبير اللوجو -->
+  <div id="logoModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onclick="closeLogoModal()">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-4 relative shadow-2xl text-center space-y-3" onclick="event.stopPropagation()">
+      <button onclick="closeLogoModal()" class="absolute top-3 left-3 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-600 hover:bg-slate-200">✕</button>
+      <h3 class="text-sm font-black text-brand-900">شعار «الأخصائي للأعلاف والدواجن»</h3>
+      <div class="rounded-2xl overflow-hidden border border-brand-gold/40 shadow-inner bg-slate-50 p-2">
+        <img src="https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ" alt="لوجو الأخصائي" class="w-full h-auto object-contain max-h-80 mx-auto rounded-xl">
+      </div>
+      <div class="text-[11px] text-slate-700 font-bold space-y-1">
+        <p class="text-emerald-800">جودة عالية • أسعار مناسبة • ثقة تدوم</p>
+        <p dir="ltr" class="text-xs text-brand-900 font-black">📞 01140969629 | 01010109759</p>
+      </div>
+    </div>
+  </div>
+
+  <audio id="liveAudioPlayer" class="hidden"></audio>
+
+  <!-- ================= 2. شريط تحديث الأسعار والاتصال ================= -->
+  <div class="bg-amber-100 border-b border-amber-300 text-amber-950 text-xs py-1.5 px-3">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-2 overflow-hidden">
+      <div class="flex items-center gap-2 whitespace-nowrap font-bold">
+        <span class="inline-block w-2 h-2 rounded-full bg-emerald-600 animate-ping"></span>
+        <span class="text-emerald-800">تحديث الأسعار:</span>
+        <span id="marketTickerTime" class="text-[11px] bg-white px-2 py-0.5 rounded border border-amber-200">اليوم 10:00 ص</span>
+      </div>
+      <div id="cloudDbStatus" class="text-[11px] font-bold text-emerald-800 flex items-center gap-1">
+        <span>🟢 متصل بالسحابة (Supabase)</span>
+      </div>
+    </div>
+  </div>
+
+  <main class="max-w-6xl mx-auto px-3 sm:px-4 py-4 space-y-4">
+
+    <!-- ================= 3. بانر الثقة ================= -->
+    <div class="bg-white rounded-2xl p-4 shadow-sm border-r-4 border-brand-gold border-t border-l border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div>
+        <h2 class="text-sm sm:text-base font-black text-brand-900 flex items-center gap-1.5">
+          <span>🛡️</span>
+          <span>اشترِ وأنت مطمئن تماماً مع «الأخصائي»</span>
+        </h2>
+        <p class="text-xs text-slate-600 mt-1">لا تدفع جنيهاً واحداً إلا بعد وصول طيورك وأعلافك، وفحص الوزن والفرز والصحة بنفسك.</p>
+      </div>
+      <div class="flex flex-wrap gap-2 text-[11px] font-bold">
+        <span class="bg-emerald-50 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-lg">✓ الدفع بعد الاستلام</span>
+        <span class="bg-amber-50 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg">✓ سلالات فرز أول ومعامل</span>
+        <span class="bg-blue-50 text-blue-800 border border-blue-200 px-2.5 py-1 rounded-lg">✓ خطوط توصيل الفيوم والمحافظات</span>
+      </div>
     </div>
 
-    <script>
-        // --- إعدادات Supabase المحدثة بمفاتيحك ---
-        const SUPABASE_URL = 'https://wlaelpcbikzlukpdlmzm.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_lOv874WL2K0gMuBz85AO9A_it4FQxHb';
-        
-        let db = null;
-        if (typeof supabase !== 'undefined') {
-            db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    <!-- ================= 4. جدول مواعيد نزول الدفعات ================= -->
+    <section class="bg-gradient-to-br from-emerald-900 to-brand-900 text-white rounded-2xl p-4 shadow-sm border border-brand-gold/40">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3 border-b border-white/10 pb-2.5">
+        <div>
+          <h3 class="text-sm sm:text-base font-black text-brand-gold flex items-center gap-1.5">
+            <span>📅</span>
+            <span>جدول نزول الدفعات القادمة والحجز المسبق</span>
+          </h3>
+          <p class="text-[11px] text-slate-300">الطيور تخرج فور وصولها من المعامل لضمان الحيوية، احجز كميتك مسبقاً</p>
+        </div>
+        <span class="text-[10px] bg-brand-gold/20 text-brand-gold border border-brand-gold/40 px-2.5 py-1 rounded-full font-bold self-start sm:self-auto">
+          حجز فوري على واتساب
+        </span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs" id="batchScheduleList"></div>
+    </section>
+
+    <!-- ================= 5. رصيد نقاط المربي ================= -->
+    <section class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h3 class="text-xs sm:text-sm font-black text-brand-900 flex items-center gap-1">
+            <span>⭐</span>
+            <span>استعلام نقاط ومكافآت المربي برقم الهاتف</span>
+          </h3>
+          <p class="text-[11px] text-slate-500 mt-0.5">اكتب رقم موبايلك لمعرفة رصيدك المتبقي وقيمة الخصم المتاح لطلبيتك</p>
+        </div>
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <input type="tel" id="userPhoneQuery" placeholder="رقم الموبايل (مثلاً: 010...)" class="w-full sm:w-56 px-3 py-1.5 text-xs border border-slate-300 rounded-xl outline-none focus:border-brand-700 font-bold">
+          <button onclick="queryUserPoints()" class="bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition whitespace-nowrap active:scale-95 shadow">
+            فحص الرصيد
+          </button>
+        </div>
+      </div>
+      <div id="pointsQueryResult" class="hidden mt-3 pt-3 border-t border-slate-100 text-xs"></div>
+    </section>
+
+    <!-- ================= 6. فلاتر التبويبات ================= -->
+    <div class="sticky top-14 z-40 bg-slate-50/95 py-2 backdrop-blur-sm border-b border-slate-200">
+      <div class="flex gap-1.5 overflow-x-auto pb-1 custom-scrollbar text-xs font-bold" id="filterTabsRow"></div>
+    </div>
+
+    <!-- ================= 7. شبكة المنتجات ================= -->
+    <section>
+      <div class="flex items-center justify-between mb-3">
+        <h3 id="currentCategoryTitle" class="text-sm sm:text-base font-black text-brand-900 flex items-center gap-1.5">
+          <span>📦</span>
+          <span>قائمة المنتجات المتاحة</span>
+        </h3>
+        <span id="productsCountBadge" class="text-[11px] font-bold text-slate-500 bg-white px-2 py-0.5 rounded-full border">0 صنف</span>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3.5" id="productsGrid"></div>
+    </section>
+
+    <!-- ================= 8. دليل المربي ================= -->
+    <section class="space-y-3 pt-2">
+      <div class="text-center">
+        <h3 class="text-sm sm:text-base font-black text-brand-900 flex items-center justify-center gap-1.5">
+          <span>📚</span>
+          <span>دليل الأخصائي العلمي لرعاية ونجاح دورتك</span>
+        </h3>
+        <p class="text-[11px] text-slate-500">نصائح وإرشادات وقائية لتفادي النافق وزيادة التحويل لأعلى وزن</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs" id="guidesGrid"></div>
+    </section>
+
+    <!-- ================= 9. حاسبة تكلفة الدورة ================= -->
+    <section class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-3">
+      <div><h3 class="text-sm font-black text-brand-900">🧮 حاسبة تكلفة دورة التسمين</h3><p class="text-[11px] text-slate-500">تقدير مالي مبدئي حسب الأرقام التي تدخلها.</p></div>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
+        <label class="font-bold">عدد الكتاكيت<input id="cycleCount" type="number" min="1" value="500" class="mt-1 w-full border rounded-lg p-2"></label>
+        <label class="font-bold">سعر الكتكوت (جنيه)<input id="cycleChickPrice" type="number" min="0" step="0.01" value="25" class="mt-1 w-full border rounded-lg p-2"></label>
+        <label class="font-bold">إجمالي العلف (كجم)<input id="cycleFeedKg" type="number" min="0" step="0.1" value="1500" class="mt-1 w-full border rounded-lg p-2"></label>
+        <label class="font-bold">سعر كيلو العلف<input id="cycleFeedPrice" type="number" min="0" step="0.01" value="22" class="mt-1 w-full border rounded-lg p-2"></label>
+        <label class="font-bold">أدوية/تحصينات/تدفئة/عمالة (جنيه)<input id="cycleOtherCost" type="number" min="0" step="0.01" value="5000" class="mt-1 w-full border rounded-lg p-2"></label>
+        <label class="font-bold">النافق المتوقع (%)<input id="cycleMortality" type="number" min="0" max="100" step="0.1" value="5" class="mt-1 w-full border rounded-lg p-2"></label>
+        <label class="font-bold">متوسط وزن البيع للطائر (كجم)<input id="cycleWeight" type="number" min="0" step="0.01" value="2" class="mt-1 w-full border rounded-lg p-2"></label>
+        <label class="font-bold">سعر بيع الكيلو (جنيه)<input id="cycleSalePrice" type="number" min="0" step="0.01" value="85" class="mt-1 w-full border rounded-lg p-2"></label>
+      </div>
+      <button onclick="calculateCycleCost()" class="w-full rounded-xl bg-brand-800 text-white font-black p-2.5">احسب التكلفة ونقطة التعادل</button>
+      <div id="cycleCalcResult" class="hidden rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs leading-relaxed"></div>
+    </section>
+
+    <!-- ================= 10. الآلات الحاسبة التفاعلية ================= -->
+    <section class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
+      <div class="flex items-center justify-between mb-3 border-b pb-2">
+        <div>
+          <h3 class="text-xs sm:text-sm font-black text-brand-900 flex items-center gap-1">
+            <span>🧮</span>
+            <span>حاسبات المربي الذكية (علف - علاج - مستلزمات)</span>
+          </h3>
+          <p class="text-[10px] text-slate-500">احسب متطلبات دفعتك بضغطة زر واطلبها فوراً</p>
+        </div>
+        <div class="flex gap-1 text-[11px] font-bold">
+          <button onclick="switchCalcTab('feed')" id="calcTabFeed" class="px-2.5 py-1 rounded-lg bg-brand-800 text-white">العلف</button>
+          <button onclick="switchCalcTab('med')" id="calcTabMed" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700">العلاج</button>
+          <button onclick="switchCalcTab('equip')" id="calcTabEquip" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700">المستلزمات</button>
+        </div>
+      </div>
+
+      <div id="calcViewFeed" class="space-y-3 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">نوع الطائر:</label>
+            <select id="calcBirdType" class="w-full border p-2 rounded-xl bg-slate-50 text-xs">
+              <option value="white">فراخ بيضاء تسمين</option>
+              <option value="sasso">فراخ ساسو</option>
+              <option value="duck">بط مسكوفي</option>
+              <option value="baladi">بلدي وفيومي</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">عدد الطيور:</label>
+            <input type="number" id="calcBirdCount" value="100" class="w-full border p-2 rounded-xl text-xs font-bold">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">العمر الحالي (بالأيام):</label>
+            <input type="number" id="calcBirdAge" value="10" class="w-full border p-2 rounded-xl text-xs font-bold">
+          </div>
+        </div>
+        <button onclick="calculateFeedNeeds()" class="w-full bg-brand-700 hover:bg-brand-800 text-white font-bold py-2 rounded-xl transition text-xs">احسب احتياج العلف</button>
+        <div id="feedCalcResult" class="hidden p-3 bg-brand-50 rounded-xl border border-brand-200"></div>
+      </div>
+
+      <div id="calcViewMed" class="hidden space-y-3 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">عدد الطيور:</label>
+            <input type="number" id="medBirdCount" value="100" class="w-full border p-2 rounded-xl text-xs font-bold">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">عمر الطيور (بالأيام):</label>
+            <input type="number" id="medBirdAge" value="15" class="w-full border p-2 rounded-xl text-xs font-bold">
+          </div>
+        </div>
+        <button onclick="calculateMedNeeds()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-xl transition text-xs">احسب كمية المياه</button>
+        <div id="medCalcResult" class="hidden p-3 bg-amber-50 rounded-xl border border-amber-200"></div>
+      </div>
+
+      <div id="calcViewEquip" class="hidden space-y-3 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">حجم الدفعة (عدد الطيور):</label>
+            <input type="number" id="equipBirdCount" value="100" class="w-full border p-2 rounded-xl text-xs font-bold">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">مرحلة التربية:</label>
+            <select id="equipStage" class="w-full border p-2 rounded-xl bg-slate-50 text-xs">
+              <option value="brood">فترة التحضين (أول 15 يوم)</option>
+              <option value="grow">فترة التسمين والكبر</option>
+            </select>
+          </div>
+        </div>
+        <button onclick="calculateEquipNeeds()" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 rounded-xl transition text-xs">احسب السقايات والعلافات</button>
+        <div id="equipCalcResult" class="hidden p-3 bg-blue-50 rounded-xl border border-blue-200"></div>
+      </div>
+    </section>
+
+    <!-- زر لوحة الإدارة المحمي -->
+    <div class="pt-4 pb-2 text-center">
+      <button onclick="promptAdminAccess()" class="inline-flex items-center gap-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs px-4 py-2 rounded-xl transition active:scale-95 font-bold shadow-sm">
+        <span>⚙️</span>
+        <span>إدارة المتجر (للأخصائي فقط)</span>
+      </button>
+    </div>
+
+  </main>
+
+  <!-- ================= 11. الشريط السفلي الثابت ================= -->
+  <footer class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-2 z-40 shadow-lg">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-2">
+      <div class="text-[11px]">
+        <div class="font-bold text-brand-900">الأخصائي للأعلاف والدواجن</div>
+        <div class="text-slate-500 text-[10px]">الدفع عند وبعد المعاينة • 01140969629</div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="openCustomOrderModal()" class="bg-brand-gold hover:bg-brand-golddark text-brand-900 font-black text-xs px-3 py-2 rounded-xl transition shadow active:scale-95">
+          📝 طلب خاص
+        </button>
+        <a href="https://wa.me/201140969629?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D8%A7%D9%84%D8%AF%D9%81%D8%B9%D8%A7%D8%AA%20%D9%88%D8%A7%D9%84%D8%A3%D8%B3%D8%B9%D8%A7%D8%B1%20%D8%A7%D9%84%D9%8A%D9%88%D9%85%D9%8A%D8%A9" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow active:scale-95">
+          <span>💬</span>
+          <span>واتساب الأخصائي</span>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= 12. نافذة تأكيد الطلب السريع ================= -->
+  <div id="orderModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-4 sm:p-5 text-xs space-y-3 relative shadow-2xl">
+      <button onclick="closeOrderModal()" class="absolute top-3 left-3 w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-500 hover:bg-slate-200">✕</button>
+      <div class="text-center pt-1">
+        <h4 class="font-black text-sm text-brand-900" id="orderModalProductTitle">تأكيد طلب المنتج</h4>
+        <p class="text-[10px] text-emerald-700 font-bold mt-0.5">الدفع بعد الاستلام والفحص التام</p>
+      </div>
+      <div class="space-y-2">
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">الاسم / اسم المربي:</label>
+          <input type="text" id="orderCustomerName" placeholder="اكتب اسمك الكريم" class="w-full border p-2 rounded-xl outline-none focus:border-brand-700 text-xs">
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">رقم الموبايل:</label>
+          <input type="tel" id="orderCustomerPhone" placeholder="010 / 011 / 012 / 015" class="w-full border p-2 rounded-xl outline-none focus:border-brand-700 text-xs font-bold">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 mb-0.5">الكمية المطلوبة:</label>
+            <input type="number" id="orderCustomerQty" value="1" min="1" class="w-full border p-2 rounded-xl outline-none focus:border-brand-700 text-xs font-bold">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 mb-0.5">المركز / القرية:</label>
+            <input type="text" id="orderCustomerAddress" placeholder="مثلاً: سنورس / الفيوم" class="w-full border p-2 rounded-xl outline-none focus:border-brand-700 text-xs">
+          </div>
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 mb-0.5">ملاحظات إضافية:</label>
+          <input type="text" id="orderCustomerNotes" placeholder="أي تفاصيل خاصة بالتوصيل أو العمر" class="w-full border p-2 rounded-xl outline-none focus:border-brand-700 text-xs">
+        </div>
+      </div>
+      <div class="pt-1">
+        <button onclick="submitOrderToWhatsapp()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-95">
+          <span>📲</span>
+          <span>إرسال الطلب وحفظه في النظام</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 13. لوحة تحكم صاحب المتجر ================= -->
+  <div id="adminModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl text-xs">
+      <div class="bg-brand-900 text-white p-3.5 flex items-center justify-between border-b border-brand-gold/40">
+        <div class="flex items-center gap-2">
+          <span class="text-base">⚙️</span>
+          <span class="font-black text-sm text-brand-gold">لوحة إدارة الأخصائي للأعلاف والدواجن</span>
+        </div>
+        <button onclick="closeAdminModal()" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center font-bold">✕</button>
+      </div>
+
+      <div class="flex border-b border-slate-200 bg-slate-100 text-xs font-bold overflow-x-auto custom-scrollbar">
+        <button onclick="setAdminTab('products')" id="adminTabBtn_products" class="px-4 py-2.5 border-b-2 border-brand-800 text-brand-800 bg-white whitespace-nowrap">المنتجات والأسعار</button>
+        <button onclick="setAdminTab('batches')" id="adminTabBtn_batches" class="px-4 py-2.5 text-slate-600 hover:text-brand-800 whitespace-nowrap">مواعيد الدفعات</button>
+        <button onclick="setAdminTab('points')" id="adminTabBtn_points" class="px-4 py-2.5 text-slate-600 hover:text-brand-800 whitespace-nowrap">نقاط العملاء</button>
+        <button onclick="setAdminTab('guides')" id="adminTabBtn_guides" class="px-4 py-2.5 text-slate-600 hover:text-brand-800 whitespace-nowrap">دليل المربي 📚</button>
+        <button onclick="setAdminTab('audio')" id="adminTabBtn_audio" class="px-4 py-2.5 text-slate-600 hover:text-brand-800 whitespace-nowrap">إدارة الصوتيات 📻</button>
+        <button onclick="setAdminTab('market')" id="adminTabBtn_market" class="px-4 py-2.5 text-slate-600 hover:text-brand-800 whitespace-nowrap">تحديث البورصة</button>
+      </div>
+
+      <div class="p-3.5 overflow-y-auto flex-1 space-y-3.5">
+        <div id="adminContent_products" class="space-y-3">
+          <div class="bg-slate-50 border p-3 rounded-2xl space-y-2">
+            <h5 class="font-black text-brand-900 text-xs">➕ إضافة منتج جديد:</h5>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <input type="text" id="newProdName" placeholder="اسم المنتج" class="border p-2 rounded-xl text-xs">
+              <select id="newProdCategory" class="border p-2 rounded-xl text-xs bg-white"></select>
+              <input type="text" id="newProdPrice" placeholder="السعر" class="border p-2 rounded-xl text-xs">
+              <input type="text" id="newProdOldPrice" placeholder="السعر قبل الخصم (اختياري)" class="border p-2 rounded-xl text-xs">
+              <input type="text" id="newProdImages" placeholder="روابط الصور مفصولة بفاصلة (,)" class="border p-2 rounded-xl text-xs sm:col-span-2">
+              <textarea id="newProdDesc" placeholder="المواصفات..." class="border p-2 rounded-xl text-xs sm:col-span-2" rows="2"></textarea>
+            </div>
+            <div class="flex gap-4 items-center text-[11px] font-bold">
+              <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="newProdIsOffer" class="rounded text-brand-700"> عرض خاص</label>
+              <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="newProdIsHot" class="rounded text-brand-700"> الأكثر طلباً 🔥</label>
+              <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="newProdInStock" checked class="rounded text-brand-700"> متوفر بالمخزون</label>
+            </div>
+            <button onclick="saveNewProduct()" class="w-full bg-brand-800 text-white font-bold py-2 rounded-xl hover:bg-brand-900 transition">حفظ في قاعدة البيانات</button>
+          </div>
+          <div class="space-y-1.5" id="adminProductsManageList"></div>
+        </div>
+
+        <div id="adminContent_batches" class="hidden space-y-3">
+          <div class="bg-slate-50 border p-3 rounded-2xl space-y-2">
+            <h5 class="font-black text-brand-900">إضافة موعد دفعة قادمة:</h5>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <input type="text" id="newBatchTitle" placeholder="اسم الدفعة" class="border p-2 rounded-xl text-xs">
+              <input type="text" id="newBatchDate" placeholder="الموعد" class="border p-2 rounded-xl text-xs">
+              <input type="text" id="newBatchStatus" placeholder="الحالة" class="border p-2 rounded-xl text-xs">
+            </div>
+            <button onclick="saveNewBatch()" class="w-full bg-emerald-700 text-white font-bold py-2 rounded-xl hover:bg-emerald-800 transition">حفظ الدفعة في قاعدة البيانات</button>
+          </div>
+          <div class="space-y-2" id="adminBatchesManageList"></div>
+        </div>
+
+        <div id="adminContent_points" class="hidden space-y-3">
+          <div class="bg-slate-50 border p-3 rounded-2xl space-y-2">
+            <h5 class="font-black text-brand-900">تعديل أو شحن نقاط:</h5>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <input type="tel" id="adminPointPhone" placeholder="رقم الهاتف" class="border p-2 rounded-xl text-xs font-bold">
+              <input type="text" id="adminPointName" placeholder="اسم المربي" class="border p-2 rounded-xl text-xs">
+              <input type="number" id="adminPointAmount" placeholder="النقاط" class="border p-2 rounded-xl text-xs font-bold">
+            </div>
+            <button onclick="saveAdminCustomerPoints()" class="w-full bg-brand-800 text-white font-bold py-2 rounded-xl hover:bg-brand-900 transition">حفظ النقاط بالسحابة</button>
+          </div>
+          <div class="space-y-1.5" id="adminCustomersPointsList"></div>
+        </div>
+
+        <div id="adminContent_guides" class="hidden space-y-3">
+          <div class="bg-slate-50 border p-3 rounded-2xl space-y-2">
+            <h5 class="font-black text-brand-900">➕ إضافة بطاقة إرشادية:</h5>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <input type="text" id="newGuideTitle" placeholder="عنوان البطاقة" class="border p-2 rounded-xl text-xs sm:col-span-2 font-bold">
+              <select id="newGuideColor" class="border p-2 rounded-xl text-xs bg-white">
+                <option value="amber">لون تنبيهي 🚨</option>
+                <option value="emerald">لون وقائي 🌡️</option>
+                <option value="blue">لون استرشادي 💡</option>
+              </select>
+              <input type="text" id="newGuideIcon" placeholder="رمز الأيقونة" value="💡" class="border p-2 rounded-xl text-xs">
+              <textarea id="newGuideContent" placeholder="اكتب النصائح هنا (كل نصيحة في سطر)..." class="border p-2 rounded-xl text-xs sm:col-span-2" rows="3"></textarea>
+            </div>
+            <button onclick="saveNewGuide()" class="w-full bg-brand-800 text-white font-bold py-2 rounded-xl hover:bg-brand-900 transition">حفظ البطاقة</button>
+          </div>
+          <div class="space-y-2" id="adminGuidesManageList"></div>
+        </div>
+
+        <div id="adminContent_audio" class="hidden space-y-3">
+          <div class="bg-slate-50 border p-3 rounded-2xl space-y-2">
+            <h5 class="font-black text-brand-900">➕ إضافة مقطع صوتي:</h5>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <input type="text" id="newAudioTitle" placeholder="عنوان المقطع" class="border p-2 rounded-xl text-xs sm:col-span-2 font-bold">
+              <input type="text" id="newAudioUrl" placeholder="رابط الصوت" class="border p-2 rounded-xl text-xs sm:col-span-2" dir="ltr">
+              <input type="text" id="newAudioDesc" placeholder="وصف المقطع" class="border p-2 rounded-xl text-xs sm:col-span-2">
+            </div>
+            <button onclick="saveNewAudioTrack()" class="w-full bg-brand-800 text-white font-bold py-2 rounded-xl hover:bg-brand-900 transition">حفظ المقطع</button>
+          </div>
+          <div class="space-y-2" id="adminAudioManageList"></div>
+        </div>
+
+        <div id="adminContent_market" class="hidden space-y-3">
+          <div class="bg-slate-50 border p-3 rounded-2xl space-y-2">
+            <h5 class="font-black text-brand-900">تحديث ساعة وتاريخ بورصة اليوم:</h5>
+            <input type="text" id="adminMarketInput" placeholder="مثلاً: اليوم 10:00 ص" class="w-full border p-2 rounded-xl text-xs font-bold">
+            <button onclick="updateMarketTime()" class="w-full bg-amber-600 text-white font-bold py-2 rounded-xl hover:bg-amber-700 transition">تحديث الشريط وحفظه</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 14. كود الجافا سكريبت + ربط Supabase ================= -->
+  <script>
+    const STORE_WHATSAPP = "201140969629";
+
+    // --- مفاتيح الاتصال بـ Supabase ---
+    const SUPABASE_URL = "https://wlaelpcbikzlukpdlmzm.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_lOv874WL2K0gMuBz85AO9A_it4FQxHb";
+    
+    let db = null;
+    try {
+      if (typeof supabase !== 'undefined') {
+        db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      }
+    } catch (e) {
+      console.warn("Supabase initialization error:", e);
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? '').replace(/[&<>"']/g, ch => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[ch]);
+    }
+
+    function jsArg(value) {
+      return escapeHTML(JSON.stringify(String(value ?? '')).replace(/</g, '\\u003c'));
+    }
+
+    function safeMediaUrl(value, allowBlob = false) {
+      try {
+        const u = new URL(String(value || ''), window.location.href);
+        if (u.protocol === 'https:' || u.protocol === 'http:' || (allowBlob && u.protocol === 'blob:')) return u.href;
+      } catch (_) {}
+      return '';
+    }
+
+    function loadStored(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (raw === null) return fallback;
+        return JSON.parse(raw) ?? fallback;
+      } catch (error) {
+        return fallback;
+      }
+    }
+
+    function storeValue(key, value) {
+      try { localStorage.setItem(key, value); return true; }
+      catch (error) { return false; }
+    }
+
+    const defaultCategories = [
+      { id: "all", name: "الكل 🌟" },
+      { id: "offers", name: "العروض والتخفيضات 🏷️" },
+      { id: "hot", name: "الأكثر طلباً 🔥" },
+      { id: "poultry", name: "الكتاكيت والطيور 🐥" },
+      { id: "feed", name: "الأعلاف والتغذية 🌾" },
+      { id: "meds", name: "الأدوية والتحصينات 💊" },
+      { id: "equipment", name: "مستلزمات التربية 💡" }
+    ];
+
+    const defaultBatches = [
+      { id: 1, title: "بط مسكوفي فرز أول (عمر يوم)", date: "الثلاثاء القادم (فجراً)", status: "متاح حجز مسبق (باقي 250 بطة)" },
+      { id: 2, title: "كتاكيت أبيض تسمين شركات", date: "الأربعاء القادم (صباحاً)", status: "حجز مفتوح حتى اكتمال العدد" },
+      { id: 3, title: "فراخ ساسو وفيومي بيور", date: "السبت القادم", status: "دفعة جديدة محصنة" }
+    ];
+
+    const defaultProducts = [
+      {
+        id: "p1",
+        name: "بط مسكوفي فرز أول (عمر 15 يوم)",
+        categoryId: "poultry",
+        price: "سعر اليوم بالوزن",
+        oldPrice: null,
+        desc: "مناعة صلبة ومعدل تحويل ممتاز، تحصين كامل ضد الطاعون والريمرلا.",
+        images: ["https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ"],
+        isHot: true,
+        isOffer: false,
+        inStock: true
+      },
+      {
+        id: "p2",
+        name: "باقة المربي المبتدئ الشاملة",
+        categoryId: "offers",
+        price: "1020 ج.م",
+        oldPrice: "1200 ج.م",
+        desc: "20 كتكوت تسمين + شيكارة علف بادي 23% + عبوة فيتامينات ومطهر معوي للاستقبال.",
+        images: ["https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ"],
+        isHot: true,
+        isOffer: true,
+        inStock: true
+      },
+      {
+        id: "p3",
+        name: "كتاكيت تسمين أبيض فرز شركات",
+        categoryId: "poultry",
+        price: "سعر بورصة اليوم",
+        oldPrice: null,
+        desc: "سلالات كب / روص أوزان ثقيلة وتحويل سريع بأقل استهلاك علف.",
+        images: ["https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ"],
+        isHot: true,
+        isOffer: false,
+        inStock: true
+      },
+      {
+        id: "p4",
+        name: "علف سوبر نامي 21% (شيكارة 25 ك)",
+        categoryId: "feed",
+        price: "850 ج.م",
+        oldPrice: "880 ج.م",
+        desc: "بروتين صافي نباتي مع مضادات سموم فطرية لنمو متناسق وخالي من المشاكل.",
+        images: ["https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ"],
+        isHot: false,
+        isOffer: true,
+        inStock: true
+      },
+      {
+        id: "p5",
+        name: "مجموعة التحصين والاستقبال البيطرية",
+        categoryId: "meds",
+        price: "135 ج.م",
+        oldPrice: "160 ج.م",
+        desc: "فيتامينات أ د 3 هـ إيطالي + مضاد حيوي معوي تنفسي ومحلول جفاف متكامل.",
+        images: ["https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ"],
+        isHot: false,
+        isOffer: false,
+        inStock: true
+      },
+      {
+        id: "p6",
+        name: "سقاية أوتوماتيك 4 لتر + علافة صاج",
+        categoryId: "equipment",
+        price: "95 ج.م",
+        oldPrice: null,
+        desc: "بلاستيك نقي عالي المرونة وصاج مجلفن يمنع هدر وتلوث العلف.",
+        images: ["https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ"],
+        isHot: false,
+        isOffer: false,
+        inStock: true
+      }
+    ];
+
+    let categories = loadStored('al_akhsai_cats', defaultCategories);
+    let products = loadStored('al_akhsai_prods', defaultProducts);
+    let batches = loadStored('al_akhsai_batches', defaultBatches);
+    let customers = loadStored('al_akhsai_custs', {});
+
+    const defaultGuides = [
+      {
+        id: "g1",
+        title: "إرشادات الاستقبال الحساسة (أول ساعتين):",
+        icon: "🚨",
+        color: "amber",
+        items: [
+          "التدفئة المسبقة: شغّل اللمبات والتحضين قبل وصول الطيور بـ ساعتين لتكون الفرشة دافئة (33-34 مئوية).",
+          "محلول الاستقبال أولاً: قدّم ماءً دافئاً مضافاً إليه محلول معالجة الجفاف أو (سُكّر بمعدل ملعقة/لتر) لتعويض إجهاد السفر.",
+          "تأخير العلف: لا تضع العلف فوراً، بل اتركه بعد نزول الماء بنصف ساعة إلى ساعة حتى تشرب الطيور وترتوي أولاً."
+        ]
+      },
+      {
+        id: "g2",
+        title: "دليل الحرارة والتهوية أسبوعياً:",
+        icon: "🌡️",
+        color: "emerald",
+        items: [
+          "الأسبوع الأول: 33° إلى 34° مئوية (تهوية غير مباشرة دون تيار).",
+          "الأسبوع الثاني: 30° إلى 31° مئوية (بدء سحب الهواء الرطب تدريجياً).",
+          "الأسبوع الثالث فما فوق: 24° إلى 26° مئوية (تهوية جيدة لمنع غاز الأمونيا والفرشة الرطبة)."
+        ]
+      }
+    ];
+
+    let guides = loadStored('al_akhsai_guides', defaultGuides);
+
+    const defaultAudioTracks = [
+      {
+        id: "a1",
+        title: "📻 إذاعة القرآن الكريم من القاهرة (بث مباشر)",
+        desc: "البث الحي والمباشر لإذاعة القرآن الكريم المصرية",
+        url: "https://stream.radiojar.com/8s5u5tpdtwzuv"
+      },
+      {
+        id: "a2",
+        title: "📖 سورة الواقعة والرحمن (تيسير الرزق والبركة)",
+        desc: "تلاوة هادئة لراحة النفس والبركة",
+        url: "https://server11.mp3quran.net/yasser/056.mp3"
+      },
+      {
+        id: "a3",
+        title: "💡 نصيحة الاستقبال الصوتية الحصرية",
+        desc: "قراءة آلية لأهم إرشادات أول ساعتين",
+        url: "tts_advice"
+      }
+    ];
+
+    let audioTracks = loadStored('al_akhsai_audio_v2', defaultAudioTracks);
+    let currentPlayingTrackId = null;
+    let marketTime = localStorage.getItem('al_akhsai_market_time') || "اليوم 10:00 ص";
+    let localOrderCounter = Math.max(0, Number.parseInt(localStorage.getItem('al_akhsai_order_counter') || '0', 10) || 0);
+
+    let activeFilter = "all";
+    const activeImageState = {};
+    let currentSelectedProductForOrder = null;
+
+    function saveToStorage() {
+      storeValue('al_akhsai_cats', JSON.stringify(categories));
+      storeValue('al_akhsai_prods', JSON.stringify(products));
+      storeValue('al_akhsai_batches', JSON.stringify(batches));
+      storeValue('al_akhsai_custs', JSON.stringify(customers));
+      storeValue('al_akhsai_guides', JSON.stringify(guides));
+      storeValue('al_akhsai_audio_v2', JSON.stringify(audioTracks));
+      storeValue('al_akhsai_market_time', marketTime);
+    }
+
+    // --- مزامنة السحابة (جلب المنتجات والدفعات من Supabase) ---
+    async function syncFromSupabase() {
+      if (!db) return;
+      const statusEl = document.getElementById('cloudDbStatus');
+
+      try {
+        // 1. جلب المنتجات
+        const { data: dbProducts, error: prodErr } = await db.from('products').select('*');
+        if (!prodErr && dbProducts && dbProducts.length > 0) {
+          products = dbProducts.map(p => ({
+            id: p.id,
+            name: p.title || p.name,
+            categoryId: p.category_id || p.category || 'poultry',
+            price: typeof p.price === 'number' ? `${p.price} ج.م` : p.price,
+            oldPrice: p.old_price ? `${p.old_price} ج.م` : null,
+            desc: p.description || p.desc || '',
+            images: p.image_url ? [p.image_url] : (p.images || ['https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ']),
+            isHot: !!p.is_hot,
+            isOffer: !!p.is_offer,
+            inStock: p.stock !== undefined ? p.stock > 0 : true
+          }));
+          saveToStorage();
+          renderProducts();
         }
 
-        // --- البيانات المحلية الاحتياطية (Offline Mode) ---
-        let localProducts = [
-            { id: 1, title: 'علف بادي 23%', category: 'أعلاف مواشي ودواجن', price: 650, image_url: 'https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=400' },
-            { id: 2, title: 'كتاكيت بيضاء عمر يوم', category: 'دواجن وطيور', price: 25, image_url: 'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=400' }
-        ];
-        let cart = [];
-        let localOrders = [];
-
-        // --- إدارة التنقل بين الصفحات ---
-        function switchView(viewName) {
-            document.querySelectorAll('section').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
-            
-            document.getElementById(`view-${viewName}`).classList.remove('hidden');
-            document.getElementById(`nav-${viewName}`).classList.add('active');
-            if (viewName === 'cart') renderCart();
-            if (viewName === 'admin') loadAdminData();
+        // 2. جلب الدفعات
+        const { data: dbBatches, error: batchErr } = await db.from('batches').select('*');
+        if (!batchErr && dbBatches && dbBatches.length > 0) {
+          batches = dbBatches;
+          saveToStorage();
+          renderBatches();
         }
 
-        // --- تحميل المنتجات ---
-        async function loadProducts() {
-            const listEl = document.getElementById('products-list');
-            let data = localProducts;
-            if (db) {
-                try {
-                    const { data: remoteData, error } = await db.from('products').select('*');
-                    if (!error && remoteData && remoteData.length > 0) {
-                        data = remoteData;
-                        document.getElementById('status-bar').innerText = 'متصل بقاعدة البيانات أونلاين 🟢';
-                    } else {
-                        document.getElementById('status-bar').innerText = 'متصل بـ Supabase (لا توجد منتجات مسجلة بعد) 🟢';
-                    }
-                } catch (err) {
-                    document.getElementById('status-bar').innerText = 'يعمل في الوضع المحلي 🟡';
-                }
-            } else {
-                document.getElementById('status-bar').innerText = 'يعمل في الوضع المحلي (أوفلاين) 🟡';
-            }
+        if (statusEl) {
+          statusEl.innerHTML = `<span class="text-emerald-700">🟢 متصل بالسحابة (Supabase)</span>`;
+        }
+      } catch (err) {
+        console.warn("Cloud sync fallback:", err);
+        if (statusEl) {
+          statusEl.innerHTML = `<span class="text-amber-700">🟡 يعمل بالوضع الاحتياطي</span>`;
+        }
+      }
+    }
 
-            listEl.innerHTML = data.map(p => `
-                <div class="product-card">
-                    <img src="${p.image_url || 'https://via.placeholder.com/300'}" class="product-img" alt="${p.title || p.name}">
-                    <div class="product-info">
-                        <div class="product-title">${p.title || p.name}</div>
-                        <div class="product-category">${p.category || ''}</div>
-                        <div class="product-price">${p.price} جنيه</div>
-                        <button class="btn" onclick="addToCart('${p.id}', '${p.title || p.name}', ${p.price})">إضافة للسلة</button>
-                    </div>
+    function openLogoModal() { document.getElementById('logoModal').classList.remove('hidden'); }
+    function closeLogoModal() { document.getElementById('logoModal').classList.add('hidden'); }
+
+    function promptAdminAccess() {
+      const enteredPass = prompt("أدخل الرقم السري الخاص بلوحة التحكم:");
+      if (enteredPass === "574176") {
+        openAdminModal();
+      } else if (enteredPass !== null) {
+        alert("الرقم السري غير صحيح!");
+      }
+    }
+
+    function toggleAudioDropdown() { document.getElementById('audioDropdown').classList.toggle('hidden'); }
+
+    function renderAudioTracks() {
+      const list = document.getElementById('audioTracksList');
+      if (!list) return;
+      list.innerHTML = audioTracks.map(track => {
+        const isPlaying = currentPlayingTrackId === track.id;
+        return `
+          <div class="p-2 rounded-xl hover:bg-brand-50/80 border ${isPlaying ? 'border-brand-700 bg-brand-50' : 'border-slate-100'} transition flex items-center justify-between gap-2">
+            <div class="overflow-hidden">
+              <h6 class="font-bold text-xs text-brand-900 truncate">${escapeHTML(track.title)}</h6>
+              <p class="text-[10px] text-slate-500 truncate">${escapeHTML(track.desc || '')}</p>
+            </div>
+            <button onclick="togglePlayTrack(${jsArg(track.id)})" class="px-2.5 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap transition ${isPlaying ? 'bg-rose-600 text-white' : 'bg-emerald-600 text-white'}">
+              ${isPlaying ? 'إيقاف ⏸' : 'تشغيل ▶'}
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function togglePlayTrack(id) {
+      const track = audioTracks.find(t => t.id === id);
+      const audio = document.getElementById('liveAudioPlayer');
+      const status = document.getElementById('audioStatus');
+      if (!track) return;
+
+      if (currentPlayingTrackId === id) {
+        audio.pause();
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        currentPlayingTrackId = null;
+        status.innerText = "تم إيقاف المقطع مؤقتاً";
+        renderAudioTracks();
+        return;
+      }
+
+      currentPlayingTrackId = id;
+      if (track.url === 'tts_advice') {
+        audio.pause();
+        speakAdvice();
+        renderAudioTracks();
+        return;
+      }
+
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      audio.src = track.url;
+      audio.play().then(() => {
+        status.innerText = `جاري تشغيل: ${track.title}`;
+      }).catch(() => {
+        status.innerText = "اضغط على أي مكان بالصفحة للسماح بتشغيل الصوت";
+      });
+      renderAudioTracks();
+    }
+
+    function speakAdvice() {
+      const text = "أهلاً بك في متجر الأخصائي. نصيحة اليوم: تأكد من تدفئة مكان الاستقبال قبل وصول الطيور بساعتين، وقدّم ماءً دافئاً مع محلول الجفاف في أول ساعتين قبل نزول العلف.";
+      const status = document.getElementById('audioStatus');
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ar-SA';
+        utterance.rate = 0.95;
+        utterance.onend = () => { currentPlayingTrackId = null; status.innerText = "المشغل جاهز"; renderAudioTracks(); };
+        window.speechSynthesis.speak(utterance);
+        status.innerText = "جاري قراءة الإرشاد الصوتي...";
+      } else {
+        alert(text);
+        currentPlayingTrackId = null;
+        renderAudioTracks();
+      }
+    }
+
+    function renderAdminAudioList() {
+      const el = document.getElementById('adminAudioManageList');
+      if (!el) return;
+      el.innerHTML = audioTracks.map(t => `
+        <div class="bg-white p-2.5 rounded-xl border flex items-center justify-between text-xs gap-2">
+          <div class="overflow-hidden">
+            <strong class="text-brand-900 truncate block">${escapeHTML(t.title)}</strong>
+            <span class="text-[10px] text-slate-500 truncate block">${escapeHTML(t.desc || t.url)}</span>
+          </div>
+          <button onclick="deleteAudioTrack(${jsArg(t.id)})" class="px-2 py-1 rounded bg-rose-50 text-rose-600 text-[10px] font-bold">حذف</button>
+        </div>
+      `).join('');
+    }
+
+    function saveNewAudioTrack() {
+      const title = document.getElementById('newAudioTitle').value.trim();
+      const url = document.getElementById('newAudioUrl').value.trim();
+      const desc = document.getElementById('newAudioDesc').value.trim();
+      if (!title || !url) return alert("يرجى كتابة عنوان ورابط المقطع");
+
+      audioTracks.push({ id: 'a_' + Date.now(), title, url: safeMediaUrl(url), desc });
+      saveToStorage();
+      renderAudioTracks();
+      renderAdminAudioList();
+      document.getElementById('newAudioTitle').value = '';
+      document.getElementById('newAudioUrl').value = '';
+      document.getElementById('newAudioDesc').value = '';
+    }
+
+    function deleteAudioTrack(id) {
+      if (confirm("هل تريد حذف هذا المقطع الصوتي؟")) {
+        audioTracks = audioTracks.filter(t => t.id !== id);
+        saveToStorage();
+        renderAudioTracks();
+        renderAdminAudioList();
+      }
+    }
+
+    async function queryUserPoints() {
+      const phoneInput = document.getElementById('userPhoneQuery').value.trim();
+      const resBox = document.getElementById('pointsQueryResult');
+      if (!phoneInput) return alert("يرجى كتابة رقم الموبايل");
+      resBox.classList.remove('hidden');
+
+      let client = customers[phoneInput];
+
+      // فحص من السحابة أولاً
+      if (db) {
+        try {
+          const { data, error } = await db.from('customers').select('*').eq('phone', phoneInput).single();
+          if (!error && data) {
+            client = { name: data.name, points: data.points };
+            customers[phoneInput] = client;
+            saveToStorage();
+          }
+        } catch (_) {}
+      }
+
+      if (client) {
+        const points = Math.max(0, Number(client.points) || 0);
+        resBox.innerHTML = `
+          <div class="bg-brand-900 text-white p-3 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-brand-gold/50">
+            <div>
+              <p class="font-bold text-xs text-brand-gold">أهلاً بك: ${escapeHTML(client.name)} 🌟</p>
+              <p class="text-[11px] text-slate-200 mt-0.5">رصيد نقاطك: <span class="font-black text-amber-300 text-xs">${points} نقطة</span></p>
+            </div>
+            <div class="bg-white/10 px-3 py-1.5 rounded-xl text-center border border-white/20">
+              <span class="text-[10px] text-slate-300 block">خصم متاح:</span>
+              <span class="font-black text-brand-gold text-xs">${(points / 10).toFixed(0)} جنيه</span>
+            </div>
+          </div>
+        `;
+      } else {
+        resBox.innerHTML = `<div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-amber-900 text-center font-bold text-[11px]">هذا الرقم غير مسجل حتى الآن. اطلب أول دفعة وسيتم إضافة نقاطك!</div>`;
+      }
+    }
+
+    function renderFilterTabs() {
+      document.getElementById('filterTabsRow').innerHTML = categories.map(cat => `
+        <button onclick="setFilter(${jsArg(cat.id)})" class="px-3 py-1.5 rounded-full transition whitespace-nowrap ${activeFilter === cat.id ? 'bg-brand-800 text-white shadow-sm' : 'bg-white text-slate-600 border border-slate-200'}">
+          ${escapeHTML(cat.name)}
+        </button>
+      `).join('');
+    }
+
+    function setFilter(catId) {
+      activeFilter = catId;
+      renderFilterTabs();
+      renderProducts();
+    }
+
+    function renderBatches() {
+      document.getElementById('batchScheduleList').innerHTML = batches.map(b => `
+        <div class="bg-white/10 border border-white/20 p-2.5 rounded-xl flex flex-col justify-between">
+          <div>
+            <span class="text-[10px] bg-brand-gold text-brand-900 font-black px-1.5 py-0.5 rounded">${escapeHTML(b.date)}</span>
+            <h5 class="font-bold text-xs text-white mt-1.5">${escapeHTML(b.title)}</h5>
+          </div>
+          <div class="mt-2 pt-2 border-t border-white/10 flex items-center justify-between text-[11px]">
+            <span class="text-emerald-300">${escapeHTML(b.status)}</span>
+            <button onclick="openCustomOrderModal(${jsArg('حجز دفعة: ' + b.title)})" class="text-brand-gold hover:underline font-bold">احجز الآن ←</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById('productsGrid');
+      let filtered = products;
+      if (activeFilter === 'offers') filtered = products.filter(p => p.isOffer);
+      else if (activeFilter === 'hot') filtered = products.filter(p => p.isHot);
+      else if (activeFilter !== 'all') filtered = products.filter(p => p.categoryId === activeFilter);
+
+      document.getElementById('productsCountBadge').innerText = `${filtered.length} صنف`;
+      if (!filtered.length) {
+        grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400 text-xs">لا توجد منتجات مسجلة هنا.</div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(p => {
+        const currentImgIndex = activeImageState[p.id] || 0;
+        const currentImgSrc = p.images && p.images[currentImgIndex] ? p.images[currentImgIndex] : 'https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ';
+        return `
+          <div class="bg-white rounded-2xl overflow-hidden border border-slate-200/90 shadow-sm flex flex-col justify-between relative group hover:shadow-md transition">
+            <div class="absolute top-2 right-2 z-10 flex flex-col gap-1">
+              ${p.isOffer ? '<span class="bg-rose-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow">عرض توفير</span>' : ''}
+              ${p.isHot ? '<span class="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow">الأكثر طلباً 🔥</span>' : ''}
+            </div>
+            <div class="relative bg-slate-100">
+              <img src="${escapeHTML(safeMediaUrl(currentImgSrc))}" alt="${escapeHTML(p.name)}" class="w-full h-28 sm:h-36 object-cover" onerror="this.src='https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ'">
+            </div>
+            <div class="p-2.5 flex-1 flex flex-col justify-between space-y-2">
+              <div>
+                <span class="text-[9px] font-bold ${p.inStock ? 'text-emerald-700 bg-emerald-50' : 'text-rose-700 bg-rose-50'} px-1.5 py-0.5 rounded">
+                  ${p.inStock ? 'متوفر بالمخزون 🟢' : 'احجز في الدفعة القادمة ⏳'}
+                </span>
+                <h4 class="font-bold text-xs text-slate-900 leading-tight mt-1">${escapeHTML(p.name)}</h4>
+                <p class="text-[10px] text-slate-500 line-clamp-2 mt-1">${escapeHTML(p.desc || '')}</p>
+              </div>
+              <div class="pt-1.5 border-t border-slate-100">
+                <div class="mb-2">
+                  ${p.oldPrice ? `<span class="line-through text-slate-400 text-[10px] ml-1.5">${escapeHTML(p.oldPrice)}</span>` : ''}
+                  <span class="text-xs sm:text-sm font-black text-brand-800">${escapeHTML(p.price)}</span>
                 </div>
-            `).join('');
+                <button onclick="openOrderModal(${jsArg(p.name)}, ${jsArg(p.price)})" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 rounded-xl transition text-[11px] flex items-center justify-center gap-1">
+                  <span>طلب عبر واتساب</span> <span>←</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openOrderModal(prodName, prodPrice) {
+      currentSelectedProductForOrder = { name: prodName, price: prodPrice };
+      document.getElementById('orderModalProductTitle').innerText = prodName;
+      document.getElementById('orderModal').classList.remove('hidden');
+    }
+
+    function openCustomOrderModal(customTitle = null) {
+      currentSelectedProductForOrder = { name: customTitle || 'طلب أصناف مخصصة', price: 'حسب الطلب' };
+      document.getElementById('orderModalProductTitle').innerText = currentSelectedProductForOrder.name;
+      document.getElementById('orderModal').classList.remove('hidden');
+    }
+
+    function closeOrderModal() { document.getElementById('orderModal').classList.add('hidden'); }
+
+    async function submitOrderToWhatsapp() {
+      const name = document.getElementById('orderCustomerName').value.trim();
+      const phone = document.getElementById('orderCustomerPhone').value.trim();
+      const qty = document.getElementById('orderCustomerQty').value.trim();
+      const address = document.getElementById('orderCustomerAddress').value.trim();
+      const notes = document.getElementById('orderCustomerNotes').value.trim();
+
+      if (!name || !phone) return alert("يرجى كتابة الاسم ورقم الموبايل");
+      const normalizedPhone = phone.replace(/[\s-]/g, '');
+      const quantity = Number(qty) || 1;
+
+      localOrderCounter += 1;
+      storeValue('al_akhsai_order_counter', String(localOrderCounter));
+      const orderRef = `AK-${new Date().getFullYear()}-${String(localOrderCounter).padStart(5, '0')}`;
+      const safeText = v => String(v || '').replace(/[<>]/g, '');
+
+      // حفظ الطلب في Supabase
+      if (db) {
+        try {
+          await db.from('orders').insert([{
+            customer_name: name,
+            customer_phone: normalizedPhone,
+            customer_address: address || 'الفيوم',
+            total_amount: parseFloat(currentSelectedProductForOrder.price) || 0,
+            items: [{ name: currentSelectedProductForOrder.name, qty: quantity, price: currentSelectedProductForOrder.price, notes }],
+            status: 'قيد المراجعة'
+          }]);
+        } catch (e) {
+          console.warn("Error inserting order to Supabase:", e);
         }
+      }
 
-        // --- إدارة السلة ---
-        function addToCart(id, title, price) {
-            const item = cart.find(i => i.id === id);
-            if (item) {
-                item.qty++;
-            } else {
-                cart.push({ id, title, price, qty: 1 });
-            }
-            updateCartCount();
-            alert('تمت إضافة المنتج للسلة!');
+      const message = `السلام عليكم ورحمة الله،
+أرغب في إرسال طلب من متجر *الأخصائي للأعلاف والدواجن*.
+رقم الطلب: *${orderRef}*
+------------------------------
+• المنتج: *${safeText(currentSelectedProductForOrder.name)}*
+• السعر: ${safeText(currentSelectedProductForOrder.price)}
+• الكمية: ${quantity}
+• اسم المربي: ${safeText(name)}
+• رقم الموبايل: ${normalizedPhone}
+• العنوان: ${safeText(address || 'الفيوم')}
+${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}------------------------------`;
+
+      window.open(`https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(message)}`, '_blank');
+      closeOrderModal();
+    }
+
+    function switchCalcTab(tab) {
+      document.getElementById('calcViewFeed').classList.toggle('hidden', tab !== 'feed');
+      document.getElementById('calcViewMed').classList.toggle('hidden', tab !== 'med');
+      document.getElementById('calcViewEquip').classList.toggle('hidden', tab !== 'equip');
+    }
+
+    function calculateFeedNeeds() {
+      const birdType = document.getElementById('calcBirdType').value;
+      const count = parseInt(document.getElementById('calcBirdCount').value) || 100;
+      const age = parseInt(document.getElementById('calcBirdAge').value) || 10;
+      const res = document.getElementById('feedCalcResult');
+
+      let dailyPerBirdGrams = age <= 18 ? 20 + (age * 3.5) : age <= 30 ? 80 + ((age - 18) * 4) : 140;
+      let feedType = age <= 18 ? "علف بادي 23%" : age <= 30 ? "علف نامي 21%" : "علف ناهي 19%";
+      if (birdType === 'duck') dailyPerBirdGrams *= 1.4;
+
+      const dailyTotalKg = ((dailyPerBirdGrams * count) / 1000).toFixed(1);
+      res.classList.remove('hidden');
+      res.innerHTML = `
+        <div class="space-y-1 text-slate-800">
+          <p>• العلف المناسب: <strong>${feedType}</strong></p>
+          <p>• الاستهلاك اليومي: <strong>${dailyTotalKg} كجم/يوم</strong></p>
+        </div>
+      `;
+    }
+
+    function calculateMedNeeds() {
+      const count = Number(document.getElementById('medBirdCount').value) || 100;
+      const age = Number(document.getElementById('medBirdAge').value) || 15;
+      const res = document.getElementById('medCalcResult');
+      const waterLitersDaily = ((count * (age * 5.5)) / 1000).toFixed(1);
+      res.classList.remove('hidden');
+      res.innerHTML = `<div class="space-y-1 text-slate-800"><p>• استهلاك الماء التقديري: <strong>${waterLitersDaily} لتر/يوم</strong></p></div>`;
+    }
+
+    function calculateCycleCost() {
+      const count = Number(document.getElementById('cycleCount').value) || 500;
+      const chickPrice = Number(document.getElementById('cycleChickPrice').value) || 25;
+      const feedKg = Number(document.getElementById('cycleFeedKg').value) || 1500;
+      const feedPrice = Number(document.getElementById('cycleFeedPrice').value) || 22;
+      const otherCost = Number(document.getElementById('cycleOtherCost').value) || 5000;
+      const totalCost = (count * chickPrice) + (feedKg * feedPrice) + otherCost;
+      const res = document.getElementById('cycleCalcResult');
+      res.classList.remove('hidden');
+      res.innerHTML = `<p>إجمالي التكلفة التقديرية: <strong>${totalCost.toLocaleString('ar-EG')} ج.م</strong></p>`;
+    }
+
+    function calculateEquipNeeds() {
+      const count = parseInt(document.getElementById('equipBirdCount').value) || 100;
+      const res = document.getElementById('equipCalcResult');
+      res.classList.remove('hidden');
+      res.innerHTML = `<p>• السقايات: <strong>${Math.ceil(count / 40)} سقاية</strong> | العلافات: <strong>${Math.ceil(count / 35)} علافة</strong></p>`;
+    }
+
+    function renderGuides() {
+      const grid = document.getElementById('guidesGrid');
+      if (!grid) return;
+      grid.innerHTML = guides.map(g => `
+        <div class="bg-amber-50/70 border border-amber-300/80 text-amber-950 rounded-2xl p-3.5 space-y-2">
+          <h4 class="font-black flex items-center gap-1.5 text-xs sm:text-sm"><span>${escapeHTML(g.icon || '📌')}</span><span>${escapeHTML(g.title)}</span></h4>
+          <ul class="space-y-1.5 text-slate-700 text-[11px] leading-relaxed">
+            ${(g.items || []).map((item, idx) => `<li class="flex items-start gap-1.5"><span class="font-bold">${idx + 1}.</span><span>${escapeHTML(item)}</span></li>`).join('')}
+          </ul>
+        </div>
+      `).join('');
+    }
+
+    function openAdminModal() {
+      document.getElementById('adminModal').classList.remove('hidden');
+      populateAdminCategorySelect();
+      renderAdminProductsList();
+      renderAdminBatchesList();
+      renderAdminCustomersList();
+      renderAdminGuidesList();
+      renderAdminAudioList();
+      document.getElementById('adminMarketInput').value = marketTime;
+    }
+
+    function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); }
+
+    function setAdminTab(tab) {
+      ['products', 'batches', 'points', 'guides', 'audio', 'market'].forEach(t => {
+        document.getElementById(`adminContent_${t}`)?.classList.toggle('hidden', t !== tab);
+      });
+    }
+
+    function populateAdminCategorySelect() {
+      document.getElementById('newProdCategory').innerHTML = categories.filter(c => c.id !== 'all').map(c => `
+        <option value="${escapeHTML(c.id)}">${escapeHTML(c.name)}</option>
+      `).join('');
+    }
+
+    async function saveNewProduct() {
+      const name = document.getElementById('newProdName').value.trim();
+      const cat = document.getElementById('newProdCategory').value;
+      const price = document.getElementById('newProdPrice').value.trim();
+      if (!name || !price) return alert("يرجى كتابة الاسم والسعر");
+
+      const newP = {
+        id: 'p_' + Date.now(),
+        name,
+        categoryId: cat,
+        price,
+        oldPrice: document.getElementById('newProdOldPrice').value.trim() || null,
+        desc: document.getElementById('newProdDesc').value.trim(),
+        images: ['https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ'],
+        isOffer: document.getElementById('newProdIsOffer').checked,
+        isHot: document.getElementById('newProdIsHot').checked,
+        inStock: document.getElementById('newProdInStock').checked
+      };
+
+      // إضافة لـ Supabase
+      if (db) {
+        try {
+          await db.from('products').insert([{
+            title: newP.name,
+            category: newP.categoryId,
+            price: parseFloat(newP.price) || 0,
+            image_url: newP.images[0],
+            description: newP.desc,
+            stock: newP.inStock ? 100 : 0
+          }]);
+        } catch (e) {
+          console.warn("Supabase product insert error:", e);
         }
+      }
 
-        function updateCartCount() {
-            const count = cart.reduce((sum, item) => sum + item.qty, 0);
-            document.getElementById('cart-count').innerText = count;
+      products.unshift(newP);
+      saveToStorage();
+      renderProducts();
+      renderAdminProductsList();
+      alert("تم حفظ المنتج بنجاح!");
+    }
+
+    function renderAdminProductsList() {
+      document.getElementById('adminProductsManageList').innerHTML = products.map(p => `
+        <div class="bg-white p-2.5 rounded-xl border flex items-center justify-between gap-2">
+          <div><strong class="text-brand-900">${escapeHTML(p.name)}</strong><span class="text-[10px] text-slate-500 block">${escapeHTML(p.price)}</span></div>
+          <button onclick="deleteProduct(${jsArg(p.id)})" class="px-2 py-1 rounded bg-rose-50 text-rose-600 text-[10px] font-bold">حذف</button>
+        </div>
+      `).join('');
+    }
+
+    async function deleteProduct(id) {
+      if (confirm("حذف الصنف؟")) {
+        if (db) {
+          try {
+            await db.from('products').delete().eq('id', id);
+          } catch (_) {}
         }
+        products = products.filter(x => x.id !== id);
+        saveToStorage();
+        renderProducts();
+        renderAdminProductsList();
+      }
+    }
 
-        function renderCart() {
-            const container = document.getElementById('cart-items');
-            const totalEl = document.getElementById('cart-total');
-            
-            if (cart.length === 0) {
-                container.innerHTML = '<p>السلة فارغة حالياً.</p>';
-                totalEl.innerText = '0';
-                return;
-            }
-            let total = 0;
-            container.innerHTML = cart.map(item => {
-                const itemTotal = item.price * item.qty;
-                total += itemTotal;
-                return `
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
-                        <div>${item.title} (${item.qty} × ${item.price})</div>
-                        <div><strong>${itemTotal} جنيه</strong></div>
-                    </div>
-                `;
-            }).join('');
-            
-            totalEl.innerText = total;
+    async function saveNewBatch() {
+      const title = document.getElementById('newBatchTitle').value.trim();
+      const date = document.getElementById('newBatchDate').value.trim();
+      if (!title || !date) return alert("أدخل اسم وموعد الدفعة");
+
+      const newB = { id: Date.now(), title, date, status: 'حجز مسبق متاح' };
+
+      if (db) {
+        try {
+          await db.from('batches').insert([newB]);
+        } catch (_) {}
+      }
+
+      batches.push(newB);
+      saveToStorage();
+      renderBatches();
+      renderAdminBatchesList();
+      alert("تم حفظ الدفعة بنجاح!");
+    }
+
+    function renderAdminBatchesList() {
+      document.getElementById('adminBatchesManageList').innerHTML = batches.map(b => `
+        <div class="bg-white p-2.5 rounded-xl border flex items-center justify-between text-xs">
+          <div><strong>${escapeHTML(b.title)}</strong><span class="text-[10px] text-slate-500 block">${escapeHTML(b.date)}</span></div>
+          <button onclick="deleteBatch(${b.id})" class="px-2 py-1 rounded bg-rose-50 text-rose-600 text-[10px] font-bold">حذف</button>
+        </div>
+      `).join('');
+    }
+
+    async function deleteBatch(id) {
+      if (confirm("حذف الدفعة؟")) {
+        if (db) {
+          try {
+            await db.from('batches').delete().eq('id', id);
+          } catch (_) {}
         }
+        batches = batches.filter(x => x.id !== id);
+        saveToStorage();
+        renderBatches();
+        renderAdminBatchesList();
+      }
+    }
 
-        // --- تأكيد الطلب ---
-        async function handleCheckout(e) {
-            e.preventDefault();
-            if (cart.length === 0) return alert('السلة فارغة!');
-            const order = {
-                customer_name: document.getElementById('cust-name').value,
-                customer_phone: document.getElementById('cust-phone').value,
-                customer_address: document.getElementById('cust-address').value,
-                total_amount: cart.reduce((sum, i) => sum + (i.price * i.qty), 0),
-                items: cart,
-                status: 'قيد المراجعة'
-            };
+    async function saveAdminCustomerPoints() {
+      const phone = document.getElementById('adminPointPhone').value.trim().replace(/[\s-]/g, '');
+      const name = document.getElementById('adminPointName').value.trim();
+      const pts = Number(document.getElementById('adminPointAmount').value.trim());
+      if (!name || !phone) return alert("أدخل البيانات كاملة");
 
-            if (db) {
-                const { error } = await db.from('orders').insert([order]);
-                if (error) alert('حدث خطأ أثناء حفظ الطلب: ' + error.message);
-                else alert('تم إرسال طلبك بنجاح وحفظه في قاعدة البيانات!');
-            } else {
-                localOrders.push({...order, id: Date.now()});
-                alert('تم تسجيل طلبك بنجاح (مُخزن محلياً)!');
-            }
-            cart = [];
-            updateCartCount();
-            document.getElementById('checkout-form').reset();
-            switchView('shop');
-        }
+      if (db) {
+        try {
+          await db.from('customers').upsert([{ phone, name, points: pts }], { onConflict: 'phone' });
+        } catch (_) {}
+      }
 
-        // --- إضافة منتج جديد من لوحة الإدارة ---
-        async function handleAddProduct(e) {
-            e.preventDefault();
-            const newProd = {
-                title: document.getElementById('prod-title').value,
-                category: document.getElementById('prod-category').value,
-                price: parseFloat(document.getElementById('prod-price').value),
-                image_url: document.getElementById('prod-image').value
-            };
+      customers[phone] = { name, points: pts };
+      saveToStorage();
+      renderAdminCustomersList();
+      alert("تم تحديث النقاط بنجاح!");
+    }
 
-            if (db) {
-                const { error } = await db.from('products').insert([newProd]);
-                if (error) {
-                    alert('خطأ أثناء إضافة المنتج: ' + error.message);
-                } else {
-                    alert('تمت إضافة المنتج إلى قاعدة البيانات بنجاح!');
-                }
-            } else {
-                localProducts.push({...newProd, id: Date.now()});
-                alert('تمت إضافة المنتج بنجاح (محلياً)!');
-            }
-            document.getElementById('add-product-form').reset();
-            loadProducts();
-            switchView('shop');
-        }
+    function renderAdminCustomersList() {
+      document.getElementById('adminCustomersPointsList').innerHTML = Object.keys(customers).map(phone => `
+        <div class="bg-white p-2 rounded-xl border flex items-center justify-between text-xs">
+          <div><strong>${escapeHTML(customers[phone].name)}</strong><span class="text-[10px] text-slate-500 block">${escapeHTML(phone)} • ${customers[phone].points} نقطة</span></div>
+        </div>
+      `).join('');
+    }
 
-        // --- جلب الطلبات للإدارة ---
-        async function loadAdminData() {
-            const listEl = document.getElementById('orders-list');
-            let orders = localOrders;
-            if (db) {
-                const { data, error } = await db.from('orders').select('*').order('created_at', { ascending: false });
-                if (!error && data) orders = data;
-            }
-            listEl.innerHTML = orders.map(o => `
-                <tr>
-                    <td>#${o.id}</td>
-                    <td>${o.customer_name}</td>
-                    <td>${o.customer_phone}</td>
-                    <td>${o.customer_address}</td>
-                    <td>${o.total_amount} جنيه</td>
-                    <td><span style="color: green; font-weight: bold;">${o.status}</span></td>
-                </tr>
-            `).join('');
-        }
+    function renderAdminGuidesList() {
+      document.getElementById('adminGuidesManageList').innerHTML = guides.map(g => `
+        <div class="bg-white p-2.5 rounded-xl border flex items-center justify-between text-xs gap-2">
+          <div><strong>${escapeHTML(g.title)}</strong></div>
+        </div>
+      `).join('');
+    }
 
-        // تشغيل التحميل الأولي للمنتجات عند فتح الصفحة
-        loadProducts();
-    </script>
+    function saveNewGuide() {
+      const title = document.getElementById('newGuideTitle').value.trim();
+      const content = document.getElementById('newGuideContent').value.trim();
+      if (!title || !content) return;
+      guides.push({ id: 'g_' + Date.now(), title, icon: '💡', items: content.split('\n').filter(Boolean) });
+      saveToStorage();
+      renderGuides();
+      renderAdminGuidesList();
+    }
+
+    function updateMarketTime() {
+      const val = document.getElementById('adminMarketInput').value.trim();
+      if (!val) return;
+      marketTime = val;
+      storeValue('al_akhsai_market_time', marketTime);
+      document.getElementById('marketTickerTime').innerText = marketTime;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('marketTickerTime').innerText = marketTime;
+      renderFilterTabs();
+      renderBatches();
+      renderProducts();
+      renderGuides();
+      renderAudioTracks();
+      // مزامنة السحابة بعد تحميل الصفحة
+      syncFromSupabase();
+    });
+  </script>
 </body>
 </html>
