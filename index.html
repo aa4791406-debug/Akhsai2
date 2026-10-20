@@ -394,7 +394,7 @@
               <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="newProdIsHot" class="rounded text-brand-700"> الأكثر طلباً 🔥</label>
               <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="newProdInStock" checked class="rounded text-brand-700"> متوفر بالمخزون</label>
             </div>
-            <button onclick="saveNewProduct()" class="w-full bg-brand-800 text-white font-bold py-2 rounded-xl hover:bg-brand-900 transition">حفظ في قاعدة البيانات</button>
+            <button onclick="saveNewProduct()" class="w-full bg-brand-800 text-white font-bold py-2 rounded-xl hover:bg-brand-900 transition">حفظ المنتج على السحابة</button>
           </div>
           <div class="space-y-1.5" id="adminProductsManageList"></div>
         </div>
@@ -407,7 +407,7 @@
               <input type="text" id="newBatchDate" placeholder="الموعد" class="border p-2 rounded-xl text-xs">
               <input type="text" id="newBatchStatus" placeholder="الحالة" class="border p-2 rounded-xl text-xs">
             </div>
-            <button onclick="saveNewBatch()" class="w-full bg-emerald-700 text-white font-bold py-2 rounded-xl hover:bg-emerald-800 transition">حفظ الدفعة في قاعدة البيانات</button>
+            <button onclick="saveNewBatch()" class="w-full bg-emerald-700 text-white font-bold py-2 rounded-xl hover:bg-emerald-800 transition">حفظ الدفعة</button>
           </div>
           <div class="space-y-2" id="adminBatchesManageList"></div>
         </div>
@@ -420,7 +420,7 @@
               <input type="text" id="adminPointName" placeholder="اسم المربي" class="border p-2 rounded-xl text-xs">
               <input type="number" id="adminPointAmount" placeholder="النقاط" class="border p-2 rounded-xl text-xs font-bold">
             </div>
-            <button onclick="saveAdminCustomerPoints()" class="w-full bg-brand-800 text-white font-bold py-2 rounded-xl hover:bg-brand-900 transition">حفظ النقاط بالسحابة</button>
+            <button onclick="saveAdminCustomerPoints()" class="w-full bg-brand-800 text-white font-bold py-2 rounded-xl hover:bg-brand-900 transition">حفظ النقاط</button>
           </div>
           <div class="space-y-1.5" id="adminCustomersPointsList"></div>
         </div>
@@ -467,11 +467,10 @@
     </div>
   </div>
 
-  <!-- ================= 14. كود الجافا سكريبت + ربط Supabase ================= -->
+  <!-- ================= 14. كود الجافا سكريبت + ربط السحابة الصحيح ================= -->
   <script>
     const STORE_WHATSAPP = "201140969629";
 
-    // --- مفاتيح الاتصال بـ Supabase ---
     const SUPABASE_URL = "https://wlaelpcbikzlukpdlmzm.supabase.co";
     const SUPABASE_KEY = "sb_publishable_lOv874WL2K0gMuBz85AO9A_it4FQxHb";
     
@@ -680,32 +679,30 @@
       storeValue('al_akhsai_market_time', marketTime);
     }
 
-    // --- مزامنة السحابة (جلب المنتجات والدفعات من Supabase) ---
+    // --- جلب المنتجات تلقائياً من Supabase لجميع المستخدمين ---
     async function syncFromSupabase() {
       if (!db) return;
       const statusEl = document.getElementById('cloudDbStatus');
 
       try {
-        // 1. جلب المنتجات
         const { data: dbProducts, error: prodErr } = await db.from('products').select('*');
         if (!prodErr && dbProducts && dbProducts.length > 0) {
           products = dbProducts.map(p => ({
             id: p.id,
-            name: p.title || p.name,
-            categoryId: p.category_id || p.category || 'poultry',
-            price: typeof p.price === 'number' ? `${p.price} ج.م` : p.price,
-            oldPrice: p.old_price ? `${p.old_price} ج.م` : null,
-            desc: p.description || p.desc || '',
-            images: p.image_url ? p.image_url.split(',').map(s => s.trim()) : (p.images || ['https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ']),
+            name: p.name,
+            categoryId: p.category_id || 'poultry',
+            price: p.price,
+            oldPrice: p.old_price,
+            desc: p.description || '',
+            images: p.image_url ? (Array.isArray(p.image_url) ? p.image_url : p.image_url.split(',').map(s => s.trim())) : ['https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ'],
             isHot: !!p.is_hot,
             isOffer: !!p.is_offer,
-            inStock: p.stock !== undefined ? p.stock > 0 : true
+            inStock: p.is_in_stock !== undefined ? p.is_in_stock : true
           }));
           saveToStorage();
           renderProducts();
         }
 
-        // 2. جلب الدفعات
         const { data: dbBatches, error: batchErr } = await db.from('batches').select('*');
         if (!batchErr && dbBatches && dbBatches.length > 0) {
           batches = dbBatches;
@@ -1114,6 +1111,7 @@ ${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}----------------------
       `).join('');
     }
 
+    // --- حفظ المنتج مباشرة على السحابة (Supabase) ---
     async function saveNewProduct() {
       const name = document.getElementById('newProdName').value.trim();
       const cat = document.getElementById('newProdCategory').value;
@@ -1125,30 +1123,21 @@ ${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}----------------------
         ? imagesInput.split(',').map(s => s.trim()).filter(Boolean)
         : ['https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ'];
 
-      const newP = {
-        id: 'p_' + Date.now(),
-        name,
-        categoryId: cat,
-        price,
-        oldPrice: document.getElementById('newProdOldPrice').value.trim() || null,
-        desc: document.getElementById('newProdDesc').value.trim(),
-        images: imagesList,
-        isOffer: document.getElementById('newProdIsOffer').checked,
-        isHot: document.getElementById('newProdIsHot').checked,
-        inStock: document.getElementById('newProdInStock').checked
+      const newDbProduct = {
+        category_id: cat,
+        name: name,
+        price: price,
+        old_price: document.getElementById('newProdOldPrice').value.trim() || null,
+        image_url: imagesList.join(','),
+        description: document.getElementById('newProdDesc').value.trim(),
+        is_hot: document.getElementById('newProdIsHot').checked,
+        is_offer: document.getElementById('newProdIsOffer').checked,
+        is_in_stock: document.getElementById('newProdInStock').checked
       };
 
-      // الحفظ المباشر في Supabase ليراه جميع الزبائن
       if (db) {
         try {
-          const { error } = await db.from('products').insert([{
-            title: newP.name,
-            category: newP.categoryId,
-            price: parseFloat(newP.price) || 0,
-            image_url: imagesList.join(','),
-            description: newP.desc,
-            stock: newP.inStock ? 100 : 0
-          }]);
+          const { error } = await db.from('products').insert([newDbProduct]);
           if (error) {
             console.error("Supabase insert error:", error);
             alert("حدث خطأ أثناء الحفظ في السحابة: " + error.message);
@@ -1159,11 +1148,25 @@ ${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}----------------------
         }
       }
 
+      // تحديث محلياً لإظهارها فوراً
+      const newP = {
+        id: 'p_' + Date.now(),
+        name,
+        categoryId: cat,
+        price,
+        oldPrice: newDbProduct.old_price,
+        desc: newDbProduct.description,
+        images: imagesList,
+        isOffer: newDbProduct.is_offer,
+        isHot: newDbProduct.is_hot,
+        inStock: newDbProduct.is_in_stock
+      };
+
       products.unshift(newP);
       saveToStorage();
       renderProducts();
       renderAdminProductsList();
-      alert("تم حفظ المنتج ورفع الصورة إلى السحابة بنجاح!");
+      alert("تم حفظ المنتج ورفع الصورة على السحابة بنجاح ليراه جميع المستخدمين!");
     }
 
     function renderAdminProductsList() {
@@ -1195,7 +1198,6 @@ ${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}----------------------
       if (!title || !date) return alert("أدخل اسم وموعد الدفعة");
 
       const newB = { id: Date.now(), title, date, status: 'حجز مسبق متاح' };
-
       if (db) {
         try {
           await db.from('batches').insert([newB]);
