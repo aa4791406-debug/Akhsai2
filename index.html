@@ -696,7 +696,7 @@
             price: typeof p.price === 'number' ? `${p.price} ج.م` : p.price,
             oldPrice: p.old_price ? `${p.old_price} ج.م` : null,
             desc: p.description || p.desc || '',
-            images: p.image_url ? [p.image_url] : (p.images || ['https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ']),
+            images: p.image_url ? p.image_url.split(',').map(s => s.trim()) : (p.images || ['https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ']),
             isHot: !!p.is_hot,
             isOffer: !!p.is_offer,
             inStock: p.stock !== undefined ? p.stock > 0 : true
@@ -854,7 +854,6 @@
 
       let client = customers[phoneInput];
 
-      // فحص من السحابة أولاً
       if (db) {
         try {
           const { data, error } = await db.from('customers').select('*').eq('phone', phoneInput).single();
@@ -992,7 +991,6 @@
       const orderRef = `AK-${new Date().getFullYear()}-${String(localOrderCounter).padStart(5, '0')}`;
       const safeText = v => String(v || '').replace(/[<>]/g, '');
 
-      // حفظ الطلب في Supabase
       if (db) {
         try {
           await db.from('orders').insert([{
@@ -1120,7 +1118,13 @@ ${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}----------------------
       const name = document.getElementById('newProdName').value.trim();
       const cat = document.getElementById('newProdCategory').value;
       const price = document.getElementById('newProdPrice').value.trim();
+      const imagesInput = document.getElementById('newProdImages').value.trim();
       if (!name || !price) return alert("يرجى كتابة الاسم والسعر");
+
+      // قراءة الروابط المدخلة في خانة الصور أو استخدام الصورة الافتراضية
+      const imagesList = imagesInput 
+        ? imagesInput.split(',').map(s => s.trim()).filter(Boolean)
+        : ['https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ'];
 
       const newP = {
         id: 'p_' + Date.now(),
@@ -1129,20 +1133,19 @@ ${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}----------------------
         price,
         oldPrice: document.getElementById('newProdOldPrice').value.trim() || null,
         desc: document.getElementById('newProdDesc').value.trim(),
-        images: ['https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ'],
+        images: imagesList,
         isOffer: document.getElementById('newProdIsOffer').checked,
         isHot: document.getElementById('newProdIsHot').checked,
         inStock: document.getElementById('newProdInStock').checked
       };
 
-      // إضافة لـ Supabase
       if (db) {
         try {
           await db.from('products').insert([{
             title: newP.name,
             category: newP.categoryId,
             price: parseFloat(newP.price) || 0,
-            image_url: newP.images[0],
+            image_url: imagesList.join(','),
             description: newP.desc,
             stock: newP.inStock ? 100 : 0
           }]);
@@ -1155,7 +1158,7 @@ ${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}----------------------
       saveToStorage();
       renderProducts();
       renderAdminProductsList();
-      alert("تم حفظ المنتج بنجاح!");
+      alert("تم حفظ المنتج وصورته بنجاح!");
     }
 
     function renderAdminProductsList() {
@@ -1283,7 +1286,6 @@ ${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}----------------------
       renderProducts();
       renderGuides();
       renderAudioTracks();
-      // مزامنة السحابة بعد تحميل الصفحة
       syncFromSupabase();
     });
   </script>
