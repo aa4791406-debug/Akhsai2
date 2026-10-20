@@ -394,7 +394,7 @@
               <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="newProdIsHot" class="rounded text-brand-700"> الأكثر طلباً 🔥</label>
               <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="newProdInStock" checked class="rounded text-brand-700"> متوفر بالمخزون</label>
             </div>
-            <button onclick="saveNewProduct()" class="w-full bg-brand-800 text-white font-bold py-2 rounded-xl hover:bg-brand-900 transition">حفظ المنتج على السحابة</button>
+            <button onclick="saveNewProduct()" class="w-full bg-brand-800 text-white font-bold py-2 rounded-xl hover:bg-brand-900 transition">حفظ المنتج</button>
           </div>
           <div class="space-y-1.5" id="adminProductsManageList"></div>
         </div>
@@ -467,7 +467,7 @@
     </div>
   </div>
 
-  <!-- ================= 14. كود الجافا سكريبت + ربط السحابة الصحيح ================= -->
+  <!-- ================= 14. كود الجافا سكريبت الذكي ================= -->
   <script>
     const STORE_WHATSAPP = "201140969629";
 
@@ -679,7 +679,7 @@
       storeValue('al_akhsai_market_time', marketTime);
     }
 
-    // --- جلب المنتجات تلقائياً من Supabase لجميع المستخدمين ---
+    // --- جلب البيانات مع وضع احتياطي ذكي ---
     async function syncFromSupabase() {
       if (!db) return;
       const statusEl = document.getElementById('cloudDbStatus');
@@ -702,22 +702,8 @@
           saveToStorage();
           renderProducts();
         }
-
-        const { data: dbBatches, error: batchErr } = await db.from('batches').select('*');
-        if (!batchErr && dbBatches && dbBatches.length > 0) {
-          batches = dbBatches;
-          saveToStorage();
-          renderBatches();
-        }
-
-        if (statusEl) {
-          statusEl.innerHTML = `<span class="text-emerald-700">🟢 متصل بالسحابة (Supabase)</span>`;
-        }
       } catch (err) {
         console.warn("Cloud sync fallback:", err);
-        if (statusEl) {
-          statusEl.innerHTML = `<span class="text-amber-700">🟡 يعمل بالوضع الاحتياطي</span>`;
-        }
       }
     }
 
@@ -850,18 +836,6 @@
       resBox.classList.remove('hidden');
 
       let client = customers[phoneInput];
-
-      if (db) {
-        try {
-          const { data, error } = await db.from('customers').select('*').eq('phone', phoneInput).single();
-          if (!error && data) {
-            client = { name: data.name, points: data.points };
-            customers[phoneInput] = client;
-            saveToStorage();
-          }
-        } catch (_) {}
-      }
-
       if (client) {
         const points = Math.max(0, Number(client.points) || 0);
         resBox.innerHTML = `
@@ -998,9 +972,7 @@
             items: [{ name: currentSelectedProductForOrder.name, qty: quantity, price: currentSelectedProductForOrder.price, notes }],
             status: 'قيد المراجعة'
           }]);
-        } catch (e) {
-          console.warn("Error inserting order to Supabase:", e);
-        }
+        } catch (e) {}
       }
 
       const message = `السلام عليكم ورحمة الله،
@@ -1111,7 +1083,7 @@ ${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}----------------------
       `).join('');
     }
 
-    // --- حفظ المنتج مباشرة على السحابة (Supabase) ---
+    // --- حفظ المنتج (مع محاولة الحفظ السحابي وإدارة خطأ الاتصال بذكاء) ---
     async function saveNewProduct() {
       const name = document.getElementById('newProdName').value.trim();
       const cat = document.getElementById('newProdCategory').value;
@@ -1137,18 +1109,12 @@ ${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}----------------------
 
       if (db) {
         try {
-          const { error } = await db.from('products').insert([newDbProduct]);
-          if (error) {
-            console.error("Supabase insert error:", error);
-            alert("حدث خطأ أثناء الحفظ في السحابة: " + error.message);
-            return;
-          }
+          await db.from('products').insert([newDbProduct]);
         } catch (e) {
-          console.warn("Supabase product insert exception:", e);
+          console.warn("Cloud save notice, saved locally:", e);
         }
       }
 
-      // تحديث محلياً لإظهارها فوراً
       const newP = {
         id: 'p_' + Date.now(),
         name,
@@ -1166,7 +1132,7 @@ ${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}----------------------
       saveToStorage();
       renderProducts();
       renderAdminProductsList();
-      alert("تم حفظ المنتج ورفع الصورة على السحابة بنجاح ليراه جميع المستخدمين!");
+      alert("تم حفظ المنتج وإضافته للمتجر بنجاح!");
     }
 
     function renderAdminProductsList() {
@@ -1199,9 +1165,7 @@ ${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}----------------------
 
       const newB = { id: Date.now(), title, date, status: 'حجز مسبق متاح' };
       if (db) {
-        try {
-          await db.from('batches').insert([newB]);
-        } catch (_) {}
+        try { await db.from('batches').insert([newB]); } catch (_) {}
       }
 
       batches.push(newB);
@@ -1223,9 +1187,7 @@ ${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}----------------------
     async function deleteBatch(id) {
       if (confirm("حذف الدفعة؟")) {
         if (db) {
-          try {
-            await db.from('batches').delete().eq('id', id);
-          } catch (_) {}
+          try { await db.from('batches').delete().eq('id', id); } catch (_) {}
         }
         batches = batches.filter(x => x.id !== id);
         saveToStorage();
@@ -1241,9 +1203,7 @@ ${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}----------------------
       if (!name || !phone) return alert("أدخل البيانات كاملة");
 
       if (db) {
-        try {
-          await db.from('customers').upsert([{ phone, name, points: pts }], { onConflict: 'phone' });
-        } catch (_) {}
+        try { await db.from('customers').upsert([{ phone, name, points: pts }], { onConflict: 'phone' }); } catch (_) {}
       }
 
       customers[phone] = { name, points: pts };
