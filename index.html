@@ -471,7 +471,8 @@
   <script>
     const STORE_WHATSAPP = "201140969629";
 
-    const SUPABASE_URL = "https://wlaelpcbikzlukpdlmzm.supabase.co";
+    // تم تصحيح عنوان المشروع إلى pdmlzm بدلاً من pdlmzm
+    const SUPABASE_URL = "https://wlaelpcbikzlukpdmlzm.supabase.co";
     const SUPABASE_KEY = "sb_publishable_lOv874WL2K0gMuBz85AO9A_it4FQxHb";
     
     let db = null;
@@ -701,6 +702,7 @@
           }));
           saveToStorage();
           renderProducts();
+          if (statusEl) statusEl.innerHTML = `<span>🟢 متصل بالسحابة (Supabase)</span>`;
         }
       } catch (err) {
         console.warn("Cloud sync fallback:", err);
@@ -1083,56 +1085,83 @@ ${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}----------------------
       `).join('');
     }
 
-    // --- حفظ المنتج (مع محاولة الحفظ السحابي وإدارة خطأ الاتصال بذكاء) ---
+    // --- حفظ المنتج بعد معالجة أخطاء السحابة والتحقق من النتيجة ---
     async function saveNewProduct() {
       const name = document.getElementById('newProdName').value.trim();
       const cat = document.getElementById('newProdCategory').value;
       const price = document.getElementById('newProdPrice').value.trim();
+      const oldPrice = document.getElementById('newProdOldPrice').value.trim() || null;
       const imagesInput = document.getElementById('newProdImages').value.trim();
-      if (!name || !price) return alert("يرجى كتابة الاسم والسعر");
+      const desc = document.getElementById('newProdDesc').value.trim();
+      const isHot = document.getElementById('newProdIsHot').checked;
+      const isOffer = document.getElementById('newProdIsOffer').checked;
+      const inStock = document.getElementById('newProdInStock').checked;
+
+      if (!name || !price) {
+        return alert("يرجى كتابة الاسم والسعر أولاً");
+      }
 
       const imagesList = imagesInput 
         ? imagesInput.split(',').map(s => s.trim()).filter(Boolean)
         : ['https://lh3.googleusercontent.com/d/1qXKpkKcWJlxsT4VF_4Q7_FWfe9qrlHhJ'];
 
-      const newDbProduct = {
+      const payload = {
         category_id: cat,
         name: name,
         price: price,
-        old_price: document.getElementById('newProdOldPrice').value.trim() || null,
+        old_price: oldPrice,
         image_url: imagesList.join(','),
-        description: document.getElementById('newProdDesc').value.trim(),
-        is_hot: document.getElementById('newProdIsHot').checked,
-        is_offer: document.getElementById('newProdIsOffer').checked,
-        is_in_stock: document.getElementById('newProdInStock').checked
+        description: desc,
+        is_hot: isHot,
+        is_offer: isOffer,
+        is_in_stock: inStock
       };
 
       if (db) {
         try {
-          await db.from('products').insert([newDbProduct]);
-        } catch (e) {
-          console.warn("Cloud save notice, saved locally:", e);
+          const { data, error } = await db.from('products').insert([payload]).select();
+          
+          if (error) {
+            console.error("خطأ Supabase:", error);
+            alert("حدث خطأ أثناء الحفظ في السحابة: " + error.message);
+            return;
+          }
+
+          const savedId = (data && data[0] && data[0].id) ? data[0].id : ('p_' + Date.now());
+          
+          const newProductItem = {
+            id: savedId,
+            name,
+            categoryId: cat,
+            price,
+            oldPrice,
+            desc,
+            images: imagesList,
+            isOffer,
+            isHot,
+            inStock
+          };
+
+          products.unshift(newProductItem);
+          saveToStorage();
+          renderProducts();
+          renderAdminProductsList();
+
+          // تفريغ الحقول بعد الحفظ الناجح
+          document.getElementById('newProdName').value = '';
+          document.getElementById('newProdPrice').value = '';
+          document.getElementById('newProdOldPrice').value = '';
+          document.getElementById('newProdImages').value = '';
+          document.getElementById('newProdDesc').value = '';
+
+          alert("تم حفظ المنتج بنجاح في السحابة والمتجر!");
+        } catch (err) {
+          console.error("فشل الاتصال:", err);
+          alert("تعذر الاتصال بالسحابة، يرجى مراجعة إعدادات الإنترنت وبيانات المشروع.");
         }
+      } else {
+        alert("خدمة Supabase غير متصلة، تأكد من صحة الرابط والمفتاح.");
       }
-
-      const newP = {
-        id: 'p_' + Date.now(),
-        name,
-        categoryId: cat,
-        price,
-        oldPrice: newDbProduct.old_price,
-        desc: newDbProduct.description,
-        images: imagesList,
-        isOffer: newDbProduct.is_offer,
-        isHot: newDbProduct.is_hot,
-        inStock: newDbProduct.is_in_stock
-      };
-
-      products.unshift(newP);
-      saveToStorage();
-      renderProducts();
-      renderAdminProductsList();
-      alert("تم حفظ المنتج وإضافته للمتجر بنجاح!");
     }
 
     function renderAdminProductsList() {
@@ -1172,6 +1201,9 @@ ${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}----------------------
       saveToStorage();
       renderBatches();
       renderAdminBatchesList();
+      document.getElementById('newBatchTitle').value = '';
+      document.getElementById('newBatchDate').value = '';
+      document.getElementById('newBatchStatus').value = '';
       alert("تم حفظ الدفعة بنجاح!");
     }
 
@@ -1209,6 +1241,9 @@ ${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}----------------------
       customers[phone] = { name, points: pts };
       saveToStorage();
       renderAdminCustomersList();
+      document.getElementById('adminPointPhone').value = '';
+      document.getElementById('adminPointName').value = '';
+      document.getElementById('adminPointAmount').value = '';
       alert("تم تحديث النقاط بنجاح!");
     }
 
@@ -1231,11 +1266,14 @@ ${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}----------------------
     function saveNewGuide() {
       const title = document.getElementById('newGuideTitle').value.trim();
       const content = document.getElementById('newGuideContent').value.trim();
-      if (!title || !content) return;
+      if (!title || !content) return alert("أدخل عنوان البطاقة والمحتوى");
       guides.push({ id: 'g_' + Date.now(), title, icon: '💡', items: content.split('\n').filter(Boolean) });
       saveToStorage();
       renderGuides();
       renderAdminGuidesList();
+      document.getElementById('newGuideTitle').value = '';
+      document.getElementById('newGuideContent').value = '';
+      alert("تم حفظ البطاقة بنجاح!");
     }
 
     function updateMarketTime() {
@@ -1244,6 +1282,7 @@ ${notes ? `• ملاحظات: ${safeText(notes)}\n` : ''}----------------------
       marketTime = val;
       storeValue('al_akhsai_market_time', marketTime);
       document.getElementById('marketTickerTime').innerText = marketTime;
+      alert("تم تحديث وقت البورصة!");
     }
 
     window.addEventListener('DOMContentLoaded', () => {
